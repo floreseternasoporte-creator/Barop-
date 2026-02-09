@@ -6,6 +6,8 @@
 - **AWS SES**: Emails
 - **Netlify Functions**: Serverless
 
+> Nota: las funciones serverless viven en `netlify/functions/` para que Netlify las detecte al desplegar.
+
 ## Estructura en S3
 
 ```
