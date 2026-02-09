@@ -3,10 +3,10 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const auth = firebase.auth();
-    const storiesApi = '/.netlify/functions/get-stories';
-    const uploadStoryApi = '/.netlify/functions/upload-story';
-    const deleteStoryApi = '/.netlify/functions/delete-story';
-    const updateStoryApi = '/.netlify/functions/update-story';
+    const storiesApi = '/api/get-stories';
+    const uploadStoryApi = '/api/upload-story';
+    const deleteStoryApi = '/api/delete-story';
+    const updateStoryApi = '/api/update-story';
 
     const storiesContainer = document.getElementById('stories');
     const storyViewer = document.getElementById('story-viewer');
