@@ -17,16 +17,16 @@ exports.handler = async (event) => {
       };
     }
 
-    const { storyId, updates } = JSON.parse(event.body);
+    const { storyId } = JSON.parse(event.body);
 
-    if (!storyId || !updates) {
+    if (!storyId) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: 'storyId and updates are required' })
+        body: JSON.stringify({ error: 'storyId is required' })
       };
     }
 
-    // Buscar la historia para actualizarla
+    // Buscar la historia para obtener información del usuario
     const listParams = {
       Bucket: BUCKET,
       Prefix: 'stories/'
@@ -34,7 +34,7 @@ exports.handler = async (event) => {
 
     const data = await s3.listObjectsV2(listParams).promise();
     
-    let storyToUpdate = null;
+    let storyToDelete = null;
     let storyKey = null;
 
     // Buscar la historia específica
@@ -48,7 +48,7 @@ exports.handler = async (event) => {
           
           const story = JSON.parse(obj.Body.toString());
           if (story.id === storyId) {
-            storyToUpdate = story;
+            storyToDelete = story;
             storyKey = item.Key;
             break;
           }
@@ -58,26 +58,31 @@ exports.handler = async (event) => {
       }
     }
 
-    if (!storyToUpdate || !storyKey) {
+    if (!storyToDelete || !storyKey) {
       return {
         statusCode: 404,
         body: JSON.stringify({ error: 'Story not found' })
       };
     }
 
-    // Aplicar actualizaciones
-    const updatedStory = {
-      ...storyToUpdate,
-      ...updates,
-      lastUpdated: Date.now()
-    };
+    // Eliminar imagen de portada si existe
+    if (storyToDelete.coverImage) {
+      try {
+        const imageKey = `story-covers/${storyToDelete.userId}/${storyId}.jpg`;
+        await s3.deleteObject({
+          Bucket: BUCKET,
+          Key: imageKey
+        }).promise();
+      } catch (error) {
+        console.error('Error deleting cover image:', error);
+        // Continuar aunque falle la eliminación de la imagen
+      }
+    }
 
-    // Guardar historia actualizada
-    await s3.putObject({
+    // Eliminar metadata de la historia
+    await s3.deleteObject({
       Bucket: BUCKET,
-      Key: storyKey,
-      Body: JSON.stringify(updatedStory),
-      ContentType: 'application/json'
+      Key: storyKey
     }).promise();
 
     return {
@@ -89,12 +94,13 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         success: true,
-        story: updatedStory
+        message: 'Story deleted successfully',
+        storyId
       })
     };
 
   } catch (error) {
-    console.error('Error updating story:', error);
+    console.error('Error deleting story:', error);
     return {
       statusCode: 500,
       headers: {
@@ -106,3 +112,6 @@ exports.handler = async (event) => {
     };
   }
 };
+const { runVercelHandler } = require('../vercel-adapter');
+
+module.exports = async (req, res) => runVercelHandler(exports.handler, req, res);
