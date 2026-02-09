@@ -53,7 +53,7 @@ vercel
 ## Arquitectura
 
 - **Frontend**: HTML/CSS/JS estáticos servidos por Vercel
-- **Backend**: Vercel Serverless Function unificada en `/api` (router interno)
+- **Backend**: Vercel Serverless Function unificada en `api/[...].js` (catch-all)
 - **Base de Datos**: PostgreSQL (metadata de usuarios, notas, historias)
 - **Almacenamiento**: AWS S3 (imágenes y archivos)
 
