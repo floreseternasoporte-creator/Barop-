@@ -1024,7 +1024,7 @@ async function saveScheduledChapter(chapterId, publishDate) {
     return;
   }
   try {
-    await fetch('/.netlify/functions/scheduled-chapters', {
+    await fetch('/api/scheduled-chapters', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1041,7 +1041,7 @@ async function saveScheduledChapter(chapterId, publishDate) {
 
 async function checkScheduledChapters() {
   try {
-    const response = await fetch('/.netlify/functions/scheduled-chapters');
+    const response = await fetch('/api/scheduled-chapters');
     if (!response.ok) return;
     const data = await response.json();
     const chapters = data.chapters || [];
@@ -1055,7 +1055,7 @@ async function checkScheduledChapters() {
             new Date(scheduled.publishDate).getTime() <= now
         )
         .map((scheduled) =>
-          fetch('/.netlify/functions/scheduled-chapters', {
+          fetch('/api/scheduled-chapters', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -3504,7 +3504,7 @@ async function generateStory() {
   try {
     const prompt = `Escribe una historia ${length} de género ${genre} sobre: ${theme}. Hazla emocionante y bien estructurada con inicio, desarrollo y final.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3569,7 +3569,7 @@ async function generateCharacter() {
   try {
     const prompt = `Crea un perfil detallado de personaje tipo ${type} con estas características: ${traits || 'sorpréndeme'}. Incluye: nombre, edad, apariencia, personalidad, habilidades, debilidades, historia de fondo y motivaciones.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3639,7 +3639,7 @@ async function generatePlotTwist() {
       ? `Basado en esta historia: "${context}", sugiere un giro de trama sorprendente e inesperado que cambie todo.`
       : 'Sugiere un giro de trama original y sorprendente para una historia.';
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3704,7 +3704,7 @@ async function generateWorld() {
   try {
     const prompt = `Crea un mundo ficticio detallado de tipo ${type} con estos elementos: ${elements || 'sorpréndeme'}. Incluye: nombre del mundo, geografía, clima, sistema político, cultura, tecnología/magia, especies/razas, y conflictos principales.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3881,8 +3881,8 @@ function sendChatMessage() {
 	  const messagesContainer = document.getElementById('chat-messages-container');
 	  
 	  try {
-	    // Usar Groq vía Netlify Function (evita exponer la API key en el navegador)
-	    const response = await fetch('/.netlify/functions/groq-chat', {
+	    // Usar Groq vía Vercel Function (evita exponer la API key en el navegador)
+	    const response = await fetch('/api/groq-chat', {
 	      method: 'POST',
 	      headers: {
 	        'Content-Type': 'application/json'
@@ -6997,7 +6997,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (profileImageDesktop) profileImageDesktop.src = base64String;
 
         // Subir a S3
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -7146,7 +7146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isFollowing = text.textContent === 'Dejar de seguir';
     
     try {
-      const response = await fetch('/.netlify/functions/following', {
+      const response = await fetch('/api/following', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -9531,7 +9531,7 @@ function showLiveNotification(message, type = 'info') {
 	  photosGrid.innerHTML = '<div class="col-span-2 text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i><p class="mt-2 text-gray-500">Cargando fotos...</p></div>';
 
   try {
-    const response = await fetch('/.netlify/functions/notes?limit=50');
+    const response = await fetch('/api/notes?limit=50');
     const result = await response.json();
     
     if (!response.ok) {
@@ -10134,7 +10134,7 @@ function showLiveNotification(message, type = 'info') {
   // Función para cargar estadísticas del perfil desde AWS S3
   async function loadUserStats(userId) {
     try {
-      const response = await fetch(`/.netlify/functions/user-stats?userId=${userId}`);
+      const response = await fetch(`/api/user-stats?userId=${userId}`);
       const result = await response.json();
       
       if (!response.ok) {
@@ -10193,7 +10193,7 @@ function showLiveNotification(message, type = 'info') {
   // Nueva función para cargar historias desde S3
   async function loadUserStoriesFromS3(userId) {
     try {
-      const response = await fetch(`/.netlify/functions/get-stories?userId=${userId}`);
+      const response = await fetch(`/api/get-stories?userId=${userId}`);
       const result = await response.json();
       
       if (!response.ok) {
@@ -10474,14 +10474,14 @@ function openCreatorHub() {
 
     try {
       // Cargar estadísticas de historias desde AWS S3
-      const storiesResponse = await fetch(`/.netlify/functions/user-stats?userId=${user.uid}&type=stories`);
+      const storiesResponse = await fetch(`/api/user-stats?userId=${user.uid}&type=stories`);
       if (storiesResponse.ok) {
         const storiesData = await storiesResponse.json();
         const storiesCount = storiesData.count || 0;
         if (storiesCountEl) storiesCountEl.textContent = storiesCount;
       } else {
         // Fallback: contar historias manualmente
-        const allStoriesResponse = await fetch('/.netlify/functions/get-stories');
+        const allStoriesResponse = await fetch('/api/get-stories');
         if (allStoriesResponse.ok) {
           const allStoriesData = await allStoriesResponse.json();
           const userStories = allStoriesData.stories ? allStoriesData.stories.filter(story => story.userId === user.uid) : [];
@@ -10492,7 +10492,7 @@ function openCreatorHub() {
       }
 
       // Cargar estadísticas de notas desde AWS S3
-      const notesResponse = await fetch(`/.netlify/functions/notes?userId=${user.uid}`);
+      const notesResponse = await fetch(`/api/notes?userId=${user.uid}`);
       if (notesResponse.ok) {
         const notesData = await notesResponse.json();
         const notesCount = notesData.notes ? notesData.notes.length : 0;
@@ -10615,7 +10615,7 @@ function openCreatorHub() {
 
     try {
       // Primero verificar límites
-      const limitsCheck = await fetch('/.netlify/functions/check-user-limits', {
+      const limitsCheck = await fetch('/api/check-user-limits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -10658,7 +10658,7 @@ function openCreatorHub() {
       }
 
       // Subir nota a AWS S3
-      const response = await fetch('/.netlify/functions/notes', {
+      const response = await fetch('/api/notes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -10728,7 +10728,7 @@ function openCreatorHub() {
     feedContainer.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i></div>';
     
     try {
-      const response = await fetch('/.netlify/functions/notes?limit=50');
+      const response = await fetch('/api/notes?limit=50');
       const result = await response.json();
       
       if (!response.ok) {
@@ -10877,7 +10877,7 @@ function moderarNota(noteId, content) {
 	      return;
 	    }
 	  
-	    const response = await fetch('/.netlify/functions/notes', {
+	    const response = await fetch('/api/notes', {
 	      method: 'POST',
 	      headers: {
 	        'Content-Type': 'application/json',
@@ -10908,7 +10908,7 @@ async function likeNote(noteId) {
     if (!user) return;
 
     try {
-      const response = await fetch('/.netlify/functions/likes', {
+      const response = await fetch('/api/likes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -11608,7 +11608,7 @@ async function likeNote(noteId) {
       const markAsRead = async () => {
         if (!notification.read && notificationsUserId) {
           try {
-            await fetch('/.netlify/functions/notifications', {
+            await fetch('/api/notifications', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -11637,7 +11637,7 @@ async function likeNote(noteId) {
 
   async function addNotification(userId, message, type = 'info') {
     try {
-      const response = await fetch('/.netlify/functions/notifications', {
+      const response = await fetch('/api/notifications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -11735,7 +11735,7 @@ async function likeNote(noteId) {
         document.getElementById('notifications-modal').classList.remove('hidden');
         
         // Cargar notificaciones desde AWS S3
-        const response = await fetch(`/.netlify/functions/notifications?userId=${currentUser.uid}`);
+        const response = await fetch(`/api/notifications?userId=${currentUser.uid}`);
         const result = await response.json();
         
         if (!response.ok) {
@@ -12311,7 +12311,7 @@ async function likeNote(noteId) {
     };
 
     try {
-      await fetch('/.netlify/functions/users', {
+      await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -12571,7 +12571,7 @@ async function likeNote(noteId) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
     
     try {
-      const response = await fetch('/.netlify/functions/send-support-email', {
+      const response = await fetch('/api/send-support-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -12620,7 +12620,7 @@ async function likeNote(noteId) {
     if (user) {
       const nextViews = (story.views || 0) + 1;
       story.views = nextViews;
-      fetch('/.netlify/functions/update-story', {
+      fetch('/api/update-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: story.id, updates: { views: nextViews } })
@@ -12637,7 +12637,7 @@ async function likeNote(noteId) {
     document.getElementById('detail-synopsis').textContent = story.synopsis || "Sinopsis no disponible.";
     
     // Cargar capítulos (AWS)
-    fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`)
+    fetch(`/api/get-chapters?storyId=${story.id}`)
       .then(response => response.json())
       .then(data => {
         const chaptersList = document.getElementById('detail-chapters');
@@ -12717,7 +12717,7 @@ async function likeNote(noteId) {
   function openStoryEdit(story) {
     currentEditingStory = story;
     document.getElementById('edit-story-language').value = story.language || "";
-    fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`)
+    fetch(`/api/get-chapters?storyId=${story.id}`)
       .then(response => response.json())
       .then(data => {
         currentChapters = [];
@@ -12768,7 +12768,7 @@ async function likeNote(noteId) {
     const isPrivate = currentEditingStory.isPrivate || false;
     const newPrivacy = !isPrivate;
     
-    fetch('/.netlify/functions/update-story', {
+    fetch('/api/update-story', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ storyId: currentEditingStory.id, updates: { isPrivate: newPrivacy } })
@@ -12791,7 +12791,7 @@ async function likeNote(noteId) {
     }
     
     if (confirm('¿Estás seguro de que quieres eliminar esta historia? Esta acción no se puede deshacer.')) {
-      fetch('/.netlify/functions/delete-story', {
+      fetch('/api/delete-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: currentEditingStory.id })
@@ -12829,7 +12829,7 @@ async function likeNote(noteId) {
       const reader = new FileReader();
       reader.onload = async function(e) {
         try {
-          const response = await fetch('/.netlify/functions/upload-image', {
+          const response = await fetch('/api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -12850,7 +12850,7 @@ async function likeNote(noteId) {
         }
         
         // Guardar todos los cambios
-        fetch('/.netlify/functions/update-story', {
+        fetch('/api/update-story', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ storyId: currentEditingStory.id, updates })
@@ -12868,7 +12868,7 @@ async function likeNote(noteId) {
       reader.readAsDataURL(file);
     } else {
       // Guardar sin cambiar portada
-      fetch('/.netlify/functions/update-story', {
+      fetch('/api/update-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: currentEditingStory.id, updates })
@@ -12918,7 +12918,7 @@ async function likeNote(noteId) {
       .catch((error) => console.error('Error buscando historias:', error));
 
     if (query) {
-      fetch('/.netlify/functions/users')
+      fetch('/api/users')
         .then(response => response.json())
         .then(data => {
           const authors = (data.users || []).filter(user =>
@@ -12940,7 +12940,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       if (story.title && story.title.toLowerCase().includes(query)) books.push(story);
     });
     renderBooksCarousel(books);
-    const usersResponse = await fetch('/.netlify/functions/users');
+    const usersResponse = await fetch('/api/users');
     const usersData = await usersResponse.json();
     const authors = (usersData.users || []).filter(user =>
       user.username && user.username.toLowerCase().includes(query)
@@ -12997,7 +12997,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         const base64String = e.target.result;
         const timestamp = Date.now();
 
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -14055,7 +14055,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     }
 
     if (currentChapterEditId) {
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -14084,7 +14084,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       const chapterId = `chapter_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       newChapter.id = chapterId;
 
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -14122,7 +14122,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function deleteChapter(chapterId) {
     if (confirm("¿Estás seguro de eliminar este capítulo?")) {
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -14156,7 +14156,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       mainApp.classList.add('hidden');
     }
     
-    fetch(`/.netlify/functions/chapters?storyId=${storyId}&chapterId=${chapterId}`)
+    fetch(`/api/chapters?storyId=${storyId}&chapterId=${chapterId}`)
       .then(response => response.json())
       .then(data => {
       const chapter = data.chapter;
@@ -14178,7 +14178,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         
         const user = firebase.auth().currentUser;
         if (user) {
-          fetch('/.netlify/functions/chapters', {
+          fetch('/api/chapters', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -14254,7 +14254,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     });
     const user = firebase.auth().currentUser;
     if (!user) return;
-    fetch(`/.netlify/functions/chapters?storyId=${storyId}&chapterId=${chapterId}`)
+    fetch(`/api/chapters?storyId=${storyId}&chapterId=${chapterId}`)
       .then(response => response.json())
       .then(data => {
         const rating = data.chapter?.ratings?.[user.uid];
@@ -14269,7 +14269,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     stars.forEach(star => {
       star.onclick = function() {
         const value = parseInt(this.getAttribute('data-value'));
-        fetch('/.netlify/functions/chapters', {
+        fetch('/api/chapters', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -14324,7 +14324,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   window.addEventListener('online', removeSkeletonEffect);
   /*********************** CARGA DE HISTORIAS **************************/
   function loadStories() {
-    fetch('/.netlify/functions/get-stories')
+    fetch('/api/get-stories')
       .then(response => response.json())
       .then(data => {
         let stories = data.stories || [];
@@ -14370,7 +14370,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   }
   /*********************** CARGA DE HISTORIAS DEL USUARIO **************************/
   function loadUserStories(userId) {
-    fetch(`/.netlify/functions/get-stories?userId=${userId}`)
+    fetch(`/api/get-stories?userId=${userId}`)
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById('user-stories');
@@ -14425,7 +14425,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   async function loadStoriesFromAWS() {
     let awsStories = [];
     try {
-      const response = await fetch('/.netlify/functions/get-stories');
+      const response = await fetch('/api/get-stories');
       if (!response.ok) {
         throw new Error(`AWS fetch failed with status ${response.status}`);
       }
@@ -14501,7 +14501,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     
     for (const story of allStories.slice(0, 30)) {
       try {
-        const chaptersResponse = await fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`);
+        const chaptersResponse = await fetch(`/api/get-chapters?storyId=${story.id}`);
         const chaptersData = await chaptersResponse.json();
         
         if (chaptersData.chapters) {
@@ -16318,7 +16318,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         const base64String = e.target.result;
         const timestamp = Date.now();
 
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -17457,7 +17457,7 @@ async function autoMigrateFirebaseData() {
     console.log('Starting automatic Firebase to S3 migration...');
     showLoader();
     
-    const response = await fetch('/.netlify/functions/migrate-firebase-to-s3', {
+    const response = await fetch('/api/migrate-firebase-to-s3', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
