@@ -1,20 +1,15 @@
 # Auditoría de infraestructura (Firebase vs AWS vs Vercel)
 
 ## Resultado corto
-No: **la plataforma todavía no está en modo “Firebase solo autenticación”**.
+- **Firebase**: solo autenticación (Auth).
+- **Datos tipo Realtime DB**: ahora se enrutan por un **bridge en AWS S3** vía `/api/realtime-db`.
+- **Runtime de despliegue**: Vercel.
 
-Actualmente Firebase se usa en:
-- **Auth** (correcto)
-- **Realtime Database** (incorrecto para el objetivo) para múltiples módulos: perfiles, seguidores, comunidad, live, chat, mensajes, notificaciones y capítulos programados.
-
-## Evidencia encontrada
-- `index.html` sigue cargando SDK de Realtime Database y Storage de Firebase en el frontend.
-- `index.html` contiene un volumen alto de llamadas `firebase.database().ref(...)` para funcionalidades críticas.
-- A nivel backend, los endpoints bajo `api/` sí están preparados para Vercel + AWS S3 (con `runVercelHandler` y AWS SDK).
-
-## Estado de despliegue
-- Objetivo de despliegue: **Vercel**.
-- El directorio `netlify/` fue retirado del repositorio en esta actualización.
+## Qué se cambió
+1. Se retiró el SDK `firebase-database-compat` del frontend.
+2. Se añadió un bridge `firebase.database()` en cliente que usa `/api/realtime-db`.
+3. Se añadió el handler `lib/handlers/realtime-db.js` para persistencia jerárquica en S3.
+4. El routing catch-all de Vercel (`api/[...].js` y `api/[...path].js`) ahora incluye `realtime-db`.
 
 ## Conclusión técnica
-Para cumplir 100% tu regla (“Firebase solo autenticación”), falta migrar del frontend todos los módulos que todavía escriben/leen de `firebase.database()` hacia `/api/*` en Vercel (persistiendo en AWS/S3 o la base que definas en Vercel).
+Ya no depende de Firebase Realtime Database como servicio. El patrón de llamadas se mantiene (compatibilidad de código), pero la persistencia real está en AWS (S3) detrás de APIs en Vercel.

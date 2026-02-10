@@ -1,7 +1,7 @@
 # Configuración de Vercel Functions
 
 ## Arquitectura
-- **Firebase**: Autenticación + aún hay uso de Realtime Database en frontend (pendiente migración completa)
+- **Firebase**: Solo autenticación (Auth). Realtime usa bridge en AWS vía /api/realtime-db
 - **AWS S3**: TODO (datos + imágenes)
 - **AWS SES**: Emails
 - **Vercel Functions**: Serverless
@@ -66,4 +66,4 @@ npm install
 ## Estado real de migración
 
 - Ver auditoría técnica en `AUDITORIA_INFRAESTRUCTURA.md` para el detalle de dependencias activas.
-- Objetivo vigente: Firebase solo para auth; datos/tiempo real a través de APIs en Vercel.
+- Estado actual: Firebase solo para auth; datos/tiempo real en AWS mediante APIs Vercel.
