@@ -6979,10 +6979,13 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Scripts para opciones y funcionalidad -->
 <script>
   // Toggle menú de opciones
-  document.getElementById('options-button').addEventListener('click', function() {
-    const menu = document.getElementById('options-menu');
-    menu.classList.toggle('hidden');
-  });
+  const optionsButton = document.getElementById('options-button');
+  if (optionsButton) {
+    optionsButton.addEventListener('click', function() {
+      const menu = document.getElementById('options-menu');
+      if (menu) menu.classList.toggle('hidden');
+    });
+  }
 
   // Toggling de texto en botón de seguir
   async function followAuthor() {
@@ -7020,8 +7023,8 @@ document.addEventListener('DOMContentLoaded', function() {
       // Actualizar contador de seguidores
       const followersElement = document.getElementById('author-followers');
       if (followersElement) {
-        const currentCount = parseInt(followersElement.textContent);
-        followersElement.textContent = isFollowing ? currentCount - 1 : currentCount + 1;
+        const currentCount = parseInt(followersElement.textContent, 10) || 0;
+        followersElement.textContent = isFollowing ? Math.max(currentCount - 1, 0) : currentCount + 1;
       }
 
       // Notificar al autor
@@ -9221,14 +9224,19 @@ function showLiveNotification(message, type = 'info') {
     }
   }
   // Interceptar el clic en el botón de transmisión
-  document.getElementById('live-startBtn').addEventListener('click', function(e) {
-    e.preventDefault();
-    // Se remueve la verificación de restricciones:
-    document.getElementById('transmission-block-modal').classList.add('hidden');
-    document.getElementById('live-stream-modal').classList.remove('hidden');
-    setLiveStreamYouTubeView();
-    // Inicia la transmisión (llamada a la función correspondiente)
-  });
+  const liveStartBtn = document.getElementById('live-startBtn');
+  if (liveStartBtn) {
+    liveStartBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // Se remueve la verificación de restricciones:
+      const transmissionBlockModal = document.getElementById('transmission-block-modal');
+      const liveStreamModal = document.getElementById('live-stream-modal');
+      if (transmissionBlockModal) transmissionBlockModal.classList.add('hidden');
+      if (liveStreamModal) liveStreamModal.classList.remove('hidden');
+      setLiveStreamYouTubeView();
+      // Inicia la transmisión (llamada a la función correspondiente)
+    });
+  }
 </script>
 
 <!-- MODAL DE VISUALIZACIÓN EN VIVO (Espectador) -->
@@ -10931,29 +10939,42 @@ async function likeNote(noteId) {
   // Detector de rostro (simulación: se aplica filtro de brillo/contraste)
   function startFaceDetection() {
     console.log("Detección de rostro activada - aplicando efecto belleza");
-    document.getElementById("live-localVideo").style.filter = "brightness(1.2) contrast(1.1)";
+    const liveLocalVideo = document.getElementById("live-localVideo");
+    if (liveLocalVideo) {
+      liveLocalVideo.style.filter = "brightness(1.2) contrast(1.1)";
+    }
   }
 
   function stopFaceDetection() {
     console.log("Detección de rostro desactivada - quitando efecto");
-    document.getElementById("live-localVideo").style.filter = "";
+    const liveLocalVideo = document.getElementById("live-localVideo");
+    if (liveLocalVideo) {
+      liveLocalVideo.style.filter = "";
+    }
   }
-  document.getElementById('face-detection-toggle').addEventListener('change', function() {
-    if (this.checked) {
-      startFaceDetection();
-    } else {
-      stopFaceDetection();
-    }
-  });
+  const faceDetectionToggle = document.getElementById('face-detection-toggle');
+  if (faceDetectionToggle) {
+    faceDetectionToggle.addEventListener('change', function() {
+      if (this.checked) {
+        startFaceDetection();
+      } else {
+        stopFaceDetection();
+      }
+    });
+  }
   // Ocultar barra de vistas según el ajuste
-  document.getElementById('hide-viewbar-toggle').addEventListener('change', function() {
-    const viewBar = document.getElementById('live-viewCount');
-    if (this.checked) {
-      viewBar.classList.add('hidden');
-    } else {
-      viewBar.classList.remove('hidden');
-    }
-  });
+  const hideViewbarToggle = document.getElementById('hide-viewbar-toggle');
+  if (hideViewbarToggle) {
+    hideViewbarToggle.addEventListener('change', function() {
+      const viewBar = document.getElementById('live-viewCount');
+      if (!viewBar) return;
+      if (this.checked) {
+        viewBar.classList.add('hidden');
+      } else {
+        viewBar.classList.remove('hidden');
+      }
+    });
+  }
   // -------------------------------
   // Detección de Swipe (Deslizar a la izquierda/derecha)
   // -------------------------------
@@ -11911,10 +11932,13 @@ async function likeNote(noteId) {
     window.captchaAnswer = answer;
     
     // Habilitar botón cuando hay respuesta
-    document.getElementById('math-answer').addEventListener('input', function() {
-      const btn = document.getElementById('captcha-submit-btn');
-      btn.disabled = this.value.trim() === '';
-    });
+    const mathAnswerInput = document.getElementById('math-answer');
+    if (mathAnswerInput) {
+      mathAnswerInput.addEventListener('input', function() {
+        const btn = document.getElementById('captcha-submit-btn');
+        if (btn) btn.disabled = this.value.trim() === '';
+      });
+    }
   }
   
   function onCaptchaSuccess(token) {
@@ -12319,9 +12343,11 @@ async function likeNote(noteId) {
     }
   }
 
-  document.getElementById('support-description').addEventListener('input', updateCharCount);
+  const supportDescription = document.getElementById('support-description');
+  if (supportDescription) supportDescription.addEventListener('input', updateCharCount);
 
-  document.getElementById('support-form').addEventListener('submit', async (e) => {
+  const supportForm = document.getElementById('support-form');
+  if (supportForm) supportForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const email = document.getElementById('support-email').value;
@@ -13695,7 +13721,8 @@ async function likeNote(noteId) {
     });
   }
   /*********************** CREACIÓN DE HISTORIAS **************************/
-  document.getElementById('story-form').addEventListener('submit', function(e) {
+  const storyForm = document.getElementById('story-form');
+  if (storyForm) storyForm.addEventListener('submit', function(e) {
     e.preventDefault();
     document.getElementById('story-upload-spinner').style.display = "flex";
     const title = document.getElementById('story-title').value;
@@ -13839,7 +13866,8 @@ async function likeNote(noteId) {
     currentChapterEditId = null;
     document.getElementById('btn-save-chapter').textContent = translations[currentLanguage].btnSaveChapter;
   }
-  document.getElementById('chapter-form').addEventListener('submit', function(e) {
+  const chapterForm = document.getElementById('chapter-form');
+  if (chapterForm) chapterForm.addEventListener('submit', function(e) {
     e.preventDefault();
     const content = document.getElementById('chapter-content').value;
     const scheduledDate = document.getElementById('chapter-schedule').value;
@@ -15076,9 +15104,13 @@ async function likeNote(noteId) {
       window.currentViewerPC = null;
     }
   }
-  document.getElementById('gift-btn') && document.getElementById('gift-btn').addEventListener('click', () => {
-    document.getElementById('gift-drawer').classList.add('open');
-  });
+  const giftBtn = document.getElementById('gift-btn');
+  if (giftBtn) {
+    giftBtn.addEventListener('click', () => {
+      const giftDrawer = document.getElementById('gift-drawer');
+      if (giftDrawer) giftDrawer.classList.add('open');
+    });
+  }
 
   function closeGiftDrawer() {
     document.getElementById('gift-drawer').classList.remove('open');
@@ -15220,20 +15252,35 @@ async function likeNote(noteId) {
   }
   window.addEventListener('load', initShakeDetection);
   /*********************** MODAL DE CREACIÓN DE CAPÍTULO **************************/
-  document.getElementById('font-family').addEventListener('change', function() {
-    document.getElementById('chapter-content').style.fontFamily = this.value;
-  });
-  document.getElementById('font-size').addEventListener('input', function() {
-    var size = this.value;
-    document.getElementById('chapter-content').style.fontSize = size + "px";
-    document.getElementById('font-size-value').innerText = size + "px";
-  });
-  document.getElementById('chapter-content').addEventListener('input', function() {
-    var text = this.value;
-    var words = text.trim().split(/\s+/).filter(word => word.length > 0);
-    document.getElementById('word-count').innerText = words.length + " palabras";
-    document.getElementById('letter-count').innerText = text.replace(/\s/g, "").length + " letras";
-  });
+  const fontFamilyInput = document.getElementById('font-family');
+  const fontSizeInput = document.getElementById('font-size');
+  const chapterContentInput = document.getElementById('chapter-content');
+
+  if (fontFamilyInput && chapterContentInput) {
+    fontFamilyInput.addEventListener('change', function() {
+      chapterContentInput.style.fontFamily = this.value;
+    });
+  }
+
+  if (fontSizeInput && chapterContentInput) {
+    fontSizeInput.addEventListener('input', function() {
+      var size = this.value;
+      chapterContentInput.style.fontSize = size + "px";
+      const fontSizeValue = document.getElementById('font-size-value');
+      if (fontSizeValue) fontSizeValue.innerText = size + "px";
+    });
+  }
+
+  if (chapterContentInput) {
+    chapterContentInput.addEventListener('input', function() {
+      var text = this.value;
+      var words = text.trim().split(/\s+/).filter(word => word.length > 0);
+      const wordCount = document.getElementById('word-count');
+      const letterCount = document.getElementById('letter-count');
+      if (wordCount) wordCount.innerText = words.length + " palabras";
+      if (letterCount) letterCount.innerText = text.replace(/\s/g, "").length + " letras";
+    });
+  }
   /*********************** NUEVAS FUNCIONES: SUGERENCIAS Y AUTORES DESTACADOS **************************/
   async function loadSuggestedStories() {
     const user = firebase.auth().currentUser;
