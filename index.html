@@ -24,7 +24,6 @@
   <!-- Firebase (compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     <style>
     /* ESTILOS BASE UBER */
 body {
@@ -10923,7 +10922,6 @@ async function likeNote(noteId) {
   const firebaseConfig = {
     apiKey: "AIzaSyBWBr3sud1_lDPmtLJI42pCBZnco5_vyCc",
     authDomain: "noble-amp-458106-g0.firebaseapp.com",
-    databaseURL: "https://noble-amp-458106-g0-default-rtdb.firebaseio.com",
     projectId: "noble-amp-458106-g0",
     storageBucket: "noble-amp-458106-g0.firebasestorage.app",
     messagingSenderId: "744574411059",
@@ -12724,7 +12722,7 @@ async function likeNote(noteId) {
     });
   }
   /*********************** MODAL DE EDICIÓN DE PERFIL **************************/
-  function openProfileEdit() {
+  async function openProfileEdit() {
     const user = firebase.auth().currentUser;
     if (!user) return;
     
@@ -12733,9 +12731,11 @@ async function likeNote(noteId) {
     
     const bottomNav = document.getElementById('bottom-nav');
     if (bottomNav) bottomNav.style.display = 'none';
-    
-    firebase.database().ref('users/' + user.uid).once('value').then(snapshot => {
-      const data = snapshot.val() || {};
+
+    try {
+      const profileResp = await fetch(`/api/users?userId=${user.uid}`);
+      const profileJson = profileResp.ok ? await profileResp.json() : {};
+      const data = profileJson.user || {};
       
       // Campos móviles (solo los que existen)
       const editName = document.getElementById('edit-name');
@@ -12743,60 +12743,60 @@ async function likeNote(noteId) {
       const editPronouns = document.getElementById('edit-pronouns');
       const editBio = document.getElementById('edit-bio');
       const editInstagram = document.getElementById('edit-instagram');
-      const editTiktok = document.getElementById('edit-tiktok');
       const editGender = document.getElementById('edit-gender');
-      const editProfileImageMobile = document.getElementById('edit-profile-image-mobile');
       
-      if (editName) editName.value = data.name || "";
-      if (editUsername) editUsername.value = data.username || "";
-      if (editPronouns) editPronouns.value = data.pronouns || "";
-      if (editBio) editBio.value = data.bio || "";
-      if (editInstagram) editInstagram.value = data.instagram || "";
-      if (editTiktok) editTiktok.value = data.tiktokUsername || "";
-      if (editGender) editGender.value = data.gender || "";
-      if (editProfileImageMobile) editProfileImageMobile.src = data.profileImage || "https://via.placeholder.com/150";
-      
+      if (editName) editName.value = data.name || '';
+      if (editUsername) editUsername.value = data.username || '';
+      if (editPronouns) editPronouns.value = data.pronouns || '';
+      if (editBio) editBio.value = data.bio || '';
+      if (editInstagram) editInstagram.value = data.instagram || '';
+      if (editGender) editGender.value = data.gender || '';
+
       // Campos desktop
       const usernameDesktop = document.getElementById('edit-username-desktop');
-      const emailDesktop = document.getElementById('edit-email-desktop');
       const firstNameDesktop = document.getElementById('edit-first-name-desktop');
       const lastNameDesktop = document.getElementById('edit-last-name-desktop');
-      const birthdayDesktop = document.getElementById('edit-birthday-desktop');
-      const genderDesktop = document.getElementById('edit-gender-desktop');
+      const emailDesktop = document.getElementById('edit-email-desktop');
+      const phoneDesktop = document.getElementById('edit-phone-desktop');
+      const countryDesktop = document.getElementById('edit-country-desktop');
       const cityDesktop = document.getElementById('edit-city-desktop');
       const websiteDesktop = document.getElementById('edit-website-desktop');
       const bioDesktop = document.getElementById('edit-bio-desktop');
-      const profileImageDesktop = document.getElementById('edit-profile-image-desktop');
+      const instagramDesktop = document.getElementById('edit-instagram-desktop');
+      const tiktokDesktop = document.getElementById('edit-tiktok-desktop');
       const followersDesktop = document.getElementById('edit-followers-desktop');
       const followingDesktop = document.getElementById('edit-following-desktop');
       const storiesDesktop = document.getElementById('edit-stories-count-desktop');
-      
-      if (usernameDesktop) usernameDesktop.value = data.username || "";
-      if (emailDesktop) emailDesktop.value = user.email || "";
-      if (firstNameDesktop) firstNameDesktop.value = data.firstName || "";
-      if (lastNameDesktop) lastNameDesktop.value = data.lastName || "";
-      if (birthdayDesktop) birthdayDesktop.value = data.birthday || "";
-      if (genderDesktop) genderDesktop.value = data.gender || "male";
-      if (cityDesktop) cityDesktop.value = data.city || "";
-      if (websiteDesktop) websiteDesktop.value = data.website || "";
-      if (bioDesktop) bioDesktop.value = data.bio || "";
-      if (profileImageDesktop) profileImageDesktop.src = data.profileImage || "https://via.placeholder.com/200";
+
+      if (usernameDesktop) usernameDesktop.value = data.username || '';
+      if (firstNameDesktop) firstNameDesktop.value = data.firstName || '';
+      if (lastNameDesktop) lastNameDesktop.value = data.lastName || '';
+      if (emailDesktop) emailDesktop.value = data.email || user.email || '';
+      if (phoneDesktop) phoneDesktop.value = data.phone || '';
+      if (countryDesktop) countryDesktop.value = data.country || '';
+      if (cityDesktop) cityDesktop.value = data.city || '';
+      if (websiteDesktop) websiteDesktop.value = data.website || '';
+      if (bioDesktop) bioDesktop.value = data.bio || '';
+      if (instagramDesktop) instagramDesktop.value = data.instagram || '';
+      if (tiktokDesktop) tiktokDesktop.value = data.tiktokUsername || '';
+
       if (followersDesktop) followersDesktop.textContent = formatNumber(data.followersCount || 0);
       if (followingDesktop) followingDesktop.textContent = formatNumber(data.followingCount || 0);
-      
-      // Cargar campos de redes sociales en desktop
-      const instagramDesktop = document.getElementById('edit-instagram-desktop');
-      const tiktokDesktop = document.getElementById('edit-tiktok-desktop');
-      
-      if (instagramDesktop) instagramDesktop.value = data.instagram || "";
-      if (tiktokDesktop) tiktokDesktop.value = data.tiktokUsername || "";
-      
-      firebase.database().ref('stories').orderByChild('userId').equalTo(user.uid).once('value').then(snapshot => {
-        if (storiesDesktop) storiesDesktop.textContent = snapshot.numChildren();
-      });
+
+      try {
+        const storiesResp = await fetch(`/api/get-stories?userId=${user.uid}`);
+        const storiesJson = storiesResp.ok ? await storiesResp.json() : { stories: [] };
+        const storyCount = (storiesJson.stories || []).length;
+        if (storiesDesktop) storiesDesktop.textContent = storyCount;
+      } catch (storiesError) {
+        console.warn('No se pudo cargar contador de historias:', storiesError);
+      }
       
       document.getElementById('profile-edit-modal').style.display = "block";
-    });
+    } catch (error) {
+      console.error('Error abriendo edición de perfil:', error);
+      alert('No se pudo abrir la edición de perfil. Intenta de nuevo.');
+    }
   }
 
   // La funcionalidad de subida de foto usa handleEditProfileImageUpload (unificada)
@@ -16271,6 +16271,25 @@ async function likeNote(noteId) {
       </div>
     </div>
 
+    <!-- Alexa Metrics (estimadas) -->
+    <div class="bg-white rounded-xl shadow p-4 mb-8">
+      <h3 class="text-lg font-bold mb-4">Alexa Metrics (estimadas)</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded-xl text-center">
+          <p class="text-sm text-gray-600">Reach Score</p>
+          <p id="alexa-reach-score" class="text-2xl font-bold text-[#00A2FF]">0</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl text-center">
+          <p class="text-sm text-gray-600">Authority Score</p>
+          <p id="alexa-authority-score" class="text-2xl font-bold text-[#00A2FF]">0</p>
+        </div>
+        <div class="bg-gray-50 p-4 rounded-xl text-center">
+          <p class="text-sm text-gray-600">Rank estimado</p>
+          <p id="alexa-rank-estimated" class="text-2xl font-bold text-[#00A2FF]">N/A</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Gráficos de Tendencias -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <div class="bg-white rounded-xl shadow p-4">
@@ -16555,54 +16574,70 @@ function updateStudioStats() {
 
   const startDate = new Date(document.getElementById('date-start').value);
   const endDate = new Date(document.getElementById('date-end').value);
-  
-  firebase.database().ref('stories').orderByChild('userId').equalTo(user.uid).once('value')
-    .then(snapshot => {
+
+  const tbody = document.getElementById('stories-table');
+  if (tbody) tbody.innerHTML = '';
+
+  Promise.all([
+    fetch(`/api/get-stories?userId=${user.uid}`).then(r => r.ok ? r.json() : { stories: [] }),
+    fetch(`/api/users?userId=${user.uid}`).then(r => r.ok ? r.json() : { user: {} })
+  ]).then(([storiesRes, userRes]) => {
+      const stories = storiesRes.stories || [];
+      const userData = userRes.user || {};
+
       let totalStories = 0;
       let totalViews = 0;
       let totalRating = 0;
       let ratingCount = 0;
       let viewsData = {};
       let hourlyData = new Array(24).fill(0);
-      
-      // Procesar datos
-      snapshot.forEach(child => {
-        const story = child.val();
-        const storyDate = new Date(story.createdAt);
-        
+
+      stories.forEach(story => {
+        const storyDate = new Date(story.createdAt || story.timestamp || Date.now());
+
         if (storyDate >= startDate && storyDate <= endDate) {
           totalStories++;
           totalViews += story.views || 0;
-          
-          // Datos por hora
+
           const hour = storyDate.getHours();
           hourlyData[hour] += story.views || 0;
-          
-          // Datos para gráfico de tendencias
+
           const dateStr = storyDate.toLocaleDateString();
           viewsData[dateStr] = (viewsData[dateStr] || 0) + (story.views || 0);
-          
+
           if (story.ratings) {
             Object.values(story.ratings).forEach(rating => {
-              totalRating += rating;
+              totalRating += Number(rating || 0);
               ratingCount++;
             });
           }
         }
-        
-        // Actualizar tabla de historias
+
         updateStoriesTable(story);
       });
-      
-      // Actualizar estadísticas
-      updateStatistics(totalStories, totalViews, totalRating, ratingCount);
-      
-      // Actualizar gráficos
+
+      const followers = Number(userData.followersCount || 0);
+      updateStatistics(totalStories, totalViews, totalRating, ratingCount, followers);
       updateCharts(viewsData, hourlyData);
-      
-      // Calcular y mostrar insights
       calculateInsights(hourlyData, viewsData);
+    })
+    .catch(error => {
+      console.error('Error actualizando studio stats:', error);
     });
+}
+
+function updateAlexaMetrics(totalViews, totalStories, followers) {
+  const reachScore = Math.min(100, Math.round((totalViews / 100) + (followers / 15)));
+  const authorityScore = Math.min(100, Math.round((totalStories * 4) + (followers / 20)));
+  const rankBase = Math.max(1, 10000000 - ((totalViews * 7) + (followers * 25) + (totalStories * 500)));
+
+  const reachEl = document.getElementById('alexa-reach-score');
+  const authEl = document.getElementById('alexa-authority-score');
+  const rankEl = document.getElementById('alexa-rank-estimated');
+
+  if (reachEl) reachEl.textContent = `${reachScore}/100`;
+  if (authEl) authEl.textContent = `${authorityScore}/100`;
+  if (rankEl) rankEl.textContent = `#${Math.round(rankBase).toLocaleString()}`;
 }
 
 function updateStoriesTable(story) {
@@ -16623,7 +16658,7 @@ function updateStoriesTable(story) {
         <img src="${story.coverImage || '/api/placeholder/50/75'}" class="w-12 h-16 object-cover rounded" alt="${story.title}">
         <div>
           <h4 class="font-bold">${story.title}</h4>
-          <p class="text-sm text-gray-600">${new Date(story.createdAt).toLocaleDateString()}</p>
+          <p class="text-sm text-gray-600">${new Date(story.createdAt || story.timestamp || Date.now()).toLocaleDateString()}</p>
         </div>
       </div>
     </td>
@@ -16654,12 +16689,16 @@ function updateStoriesTable(story) {
   tbody.appendChild(row);
 }
 
-function updateStatistics(totalStories, totalViews, totalRating, ratingCount) {
+function updateStatistics(totalStories, totalViews, totalRating, ratingCount, followersCount = 0) {
   document.getElementById('total-stories').textContent = totalStories;
   document.getElementById('total-views').textContent = totalViews;
   document.getElementById('average-rating').textContent = 
     ratingCount > 0 ? (totalRating / ratingCount).toFixed(1) : "0.0";
-  
+  const totalFollowersEl = document.getElementById('total-followers');
+  if (totalFollowersEl) totalFollowersEl.textContent = followersCount;
+
+  updateAlexaMetrics(totalViews, totalStories, followersCount);
+
   // Actualizar tendencias (ejemplo)
   document.getElementById('stories-trend').textContent = '+5%';
   document.getElementById('views-trend').textContent = '+12%';
