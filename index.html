@@ -2519,7 +2519,7 @@ setInterval(checkScheduledChapters, 60000);
         </div>
       </div>
       
-      <div id="authError" class="mt-4 text-red-500 text-center text-sm hidden"></div>
+      <div id="authErrorEmail" class="mt-4 text-red-500 text-center text-sm hidden"></div>
     </div>
   </div>
   
@@ -2540,7 +2540,7 @@ setInterval(checkScheduledChapters, 60000);
     <div class="flex-1 px-6 pt-8">
       <p id="user-email-display" class="text-sm text-gray-600 mb-6"></p>
       
-      <form id="authForm" class="space-y-4" onsubmit="event.preventDefault(); loginUser();">
+      <form id="authForm" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
         <input
           id="passwordInput"
           type="password"
@@ -2563,7 +2563,7 @@ setInterval(checkScheduledChapters, 60000);
         </button>
       </div>
       
-      <div id="authError" class="mt-4 text-red-500 text-center text-sm hidden"></div>
+      <div id="authErrorPassword" class="mt-4 text-red-500 text-center text-sm hidden"></div>
     </div>
   </div>
   
@@ -11314,7 +11314,7 @@ async function likeNote(noteId) {
   const passwordInput = document.getElementById('passwordInput');
   const submitButton = document.getElementById('submitButton');
   const toggleAuth = document.getElementById('toggleAuth');
-  const authError = document.getElementById('authError');
+  const authError = document.getElementById('authErrorEmail');
   const authFormContainer = document.getElementById('auth-form');
   const mainApp = document.getElementById('main-app');
   let isLogin = true;
@@ -11790,7 +11790,18 @@ async function likeNote(noteId) {
   }
   
   function showPasswordStep() {
-    const email = document.getElementById('emailInput').value;
+    const email = document.getElementById('emailInput').value.trim();
+    const emailError = document.getElementById('authErrorEmail');
+
+    if (!email || !email.includes('@')) {
+      if (emailError) {
+        emailError.textContent = 'Ingresa un correo válido';
+        emailError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (emailError) emailError.classList.add('hidden');
     document.getElementById('user-email-display').textContent = email;
     document.getElementById('email-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
@@ -12255,7 +12266,7 @@ async function likeNote(noteId) {
     const email = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
     const submitButton = document.getElementById('submitButton');
-    const authError = document.querySelector('#password-form #authError');
+    const authError = document.getElementById('authErrorPassword');
     
     submitButton.disabled = true;
     submitButton.textContent = 'Iniciando...';
@@ -12292,13 +12303,15 @@ async function likeNote(noteId) {
     }
   }
   
-  toggleAuth.addEventListener('click', () => {
+  if (toggleAuth) {
+    toggleAuth.addEventListener('click', () => {
     isLogin = !isLogin;
     const authTitle = document.getElementById('auth-title');
     submitButton.textContent = isLogin ? 'Continuar' : 'Crear cuenta';
     authTitle.textContent = isLogin ? 'Iniciar sesión' : 'Crear cuenta';
     toggleAuth.textContent = isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión';
   });
+  }
 
   async function syncUserProfileToAWS(user, profileOverrides = {}) {
     if (!user) return;
@@ -12321,52 +12334,57 @@ async function likeNote(noteId) {
     }
   }
 
-  authForm.addEventListener('submit', e => {
-    e.preventDefault();
+  async function handleAuthSubmit() {
+    if (!authError) return;
+
     authError.classList.add('hidden');
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    if (isLogin) {
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          console.log("Usuario autenticado:", userCredential.user);
-        })
-        .catch(error => {
-          console.error(error);
-          authError.textContent = error.message;
-          authError.classList.remove('hidden');
-        });
-    } else {
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          const userCountRef = firebase.database().ref('userCount');
-          userCountRef.transaction(count => (count || 0) + 1).then(result => {
-            const newCount = result.snapshot.val();
-            const isVerified = newCount <= 100;
-            const userProfile = {
-              username: "Nuevo Usuario",
-              bio: "",
-              profileImage: "",
-              followersCount: 0,
-              followingCount: 0,
-              ratedCount: 0,
-              isVerified: isVerified,
-              registrationTimestamp: Date.now(),
-              founder: false,
-              email: user.email
-            };
-            firebase.database().ref('users/' + user.uid).set(userProfile);
-            syncUserProfileToAWS(user, userProfile);
-          });
-        })
-        .catch(error => {
-          console.error(error);
-          authError.textContent = error.message;
-          authError.classList.remove('hidden');
-        });
+    const email = emailInput?.value?.trim() || '';
+    const password = passwordInput?.value || '';
+
+    if (!email || !password) {
+      authError.textContent = 'Completa correo y contraseña para continuar';
+      authError.classList.remove('hidden');
+      return;
     }
-  });
+
+    if (isLogin) {
+      loginUser();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creando cuenta...';
+
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      const userCountRef = firebase.database().ref('userCount');
+      const result = await userCountRef.transaction((count) => (count || 0) + 1);
+      const newCount = result.snapshot.val();
+      const isVerified = newCount <= 100;
+      const userProfile = {
+        username: 'Nuevo Usuario',
+        bio: '',
+        profileImage: '',
+        followersCount: 0,
+        followingCount: 0,
+        ratedCount: 0,
+        isVerified,
+        registrationTimestamp: Date.now(),
+        founder: false,
+        email: user.email
+      };
+
+      await firebase.database().ref('users/' + user.uid).set(userProfile);
+      await syncUserProfileToAWS(user, userProfile);
+    } catch (error) {
+      console.error(error);
+      authError.textContent = error.message || 'No se pudo crear la cuenta';
+      authError.classList.remove('hidden');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Crear cuenta';
+    }
+  }
   firebase.auth().onAuthStateChanged(user => {
     // Aplicar traducción automática al cargar - MEJORADO
     const applyUserLanguage = () => {
@@ -14570,7 +14588,7 @@ async function likeNote(noteId) {
     return { userRatings, categoryScores };
   }
 
-  function createStoryCard(story) {
+  function createRecommendedStoryCard(story) {
     const card = document.createElement('div');
     card.className = 'cursor-pointer transform transition-transform hover:scale-105';
     card.onclick = () => openStoryDetail(story);
@@ -14757,7 +14775,7 @@ async function likeNote(noteId) {
       .slice(0, 8);
     
     trending.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
 
@@ -14772,7 +14790,7 @@ async function likeNote(noteId) {
       .slice(0, 8);
     
     mysteryStories.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
 
@@ -14787,7 +14805,7 @@ async function likeNote(noteId) {
       .slice(0, 8);
     
     adventureStories.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
   
