@@ -29,13 +29,13 @@ const getRoute = (query) => {
 };
 
 const getAwsConfigFlags = () => ({
-  awsRegionConfigured: Boolean(process.env.AWS_REGION || process.env.MY_AWS_REGION || process.env.ZENVIO_AWS_REGION),
-  awsBucketConfigured: Boolean(process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET),
-  awsKeyConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID || process.env.ZENVIO_AWS_ACCESS_KEY),
-  awsSecretConfigured: Boolean(process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.ZENVIO_AWS_SECRET_KEY)
+  awsRegionConfigured: Boolean(process.env.AWS_REGION || process.env.MY_AWS_REGION),
+  awsBucketConfigured: Boolean(process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME),
+  awsKeyConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID),
+  awsSecretConfigured: Boolean(process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY)
 });
 
-const resolveBucket = () => process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET;
+const resolveBucket = () => process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME;
 
 module.exports = async (req, res) => {
   const route = getRoute(req.query);
