@@ -2909,7 +2909,7 @@ firebase.auth().onAuthStateChanged(user => {
   </div>
 
   <!-- BOTTOM NAVIGATION MINIMALISTA -->
-  <div id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 transition-all duration-300 z-[100]">
+  <div id="bottom-nav" class="fixed bottom-0 left-0 right-0 bg-white/95 border-t border-[#e6e6e6] backdrop-blur-md transition-all duration-300 z-[100]">
     <div class="grid grid-cols-5 px-2 py-2">
       <button id="nav-home" data-section="home" class="nav-button flex flex-col items-center py-2 px-1 rounded-lg transition-colors duration-200 active">
         <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 24 24">
@@ -2925,7 +2925,7 @@ firebase.auth().onAuthStateChanged(user => {
         <span class="text-xs font-medium">Buscar</span>
       </button>
       <button id="nav-create" data-section="create" class="nav-button flex flex-col items-center py-2 px-1 rounded-lg transition-colors duration-200">
-        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mb-1">
+        <div class="w-8 h-8 bg-[#111111] rounded-full flex items-center justify-center mb-1 shadow-sm">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
@@ -2952,7 +2952,7 @@ firebase.auth().onAuthStateChanged(user => {
     }
     
     .nav-button.active {
-      color: #3b82f6;
+      color: #111111;
     }
     
     .nav-button:hover {
@@ -2960,7 +2960,7 @@ firebase.auth().onAuthStateChanged(user => {
     }
     
     .nav-button.active:hover {
-      background-color: #dbeafe;
+      background-color: #ededed;
     }
     
     #bottom-nav.hide {
@@ -3078,16 +3078,16 @@ firebase.auth().onAuthStateChanged(user => {
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      <h1 class="text-lg font-semibold text-gray-900 flex items-center">
-        <span class="bg-gradient-to-r from-[#00A2FF] via-[#ff6b7a] to-[#25F4EE] bg-clip-text text-transparent">Atenis AI</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 text-purple-600 transform transition-transform duration-300 hover:rotate-12 hover:-translate-y-1" viewBox="0 0 24 24" fill="currentColor">
+      <h1 class="text-lg font-semibold text-[#111111] flex items-center">
+        <span class="text-[#111111]">Atenis AI</span>
+        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-5 w-5 text-[#111111] transform transition-transform duration-300 hover:rotate-12 hover:-translate-y-1" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 2L9 12L12 15L15 12L12 2Z"/>
           <path d="M12 15L9 12L2 14L5 17L12 15Z"/>
           <path d="M12 15L15 12L22 14L19 17L12 15Z"/>
           <circle cx="12" cy="9" r="1.5" fill="white" opacity="0.8"/>
         </svg>
       </h1>
-      <button onclick="openZenvioMenu()" class="text-gray-700 hover:text-purple-600 transition-colors">
+      <button onclick="openZenvioMenu()" class="text-gray-700 hover:text-[#111111] transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="5" r="1"/>
           <circle cx="12" cy="12" r="1"/>
@@ -3099,19 +3099,19 @@ firebase.auth().onAuthStateChanged(user => {
     <!-- Tabs de funcionalidades -->
     <div class="flex-shrink-0 border-b border-gray-200 bg-white">
       <div class="flex overflow-x-auto scrollbar-hide">
-        <button onclick="switchZenvioTab('chat')" class="zenvio-tab active px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-[#00A2FF] text-[#00A2FF]">
+        <button onclick="switchZenvioTab('chat', event)" class="zenvio-tab active px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-[#111111] text-[#111111]">
           Chat
         </button>
-        <button onclick="switchZenvioTab('story-generator')" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#00A2FF]">
+        <button onclick="switchZenvioTab('story-generator', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Generador de Historias
         </button>
-        <button onclick="switchZenvioTab('character-creator')" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#00A2FF]">
+        <button onclick="switchZenvioTab('character-creator', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Creador de Personajes
         </button>
-        <button onclick="switchZenvioTab('plot-twist')" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#00A2FF]">
+        <button onclick="switchZenvioTab('plot-twist', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Giros de Trama
         </button>
-        <button onclick="switchZenvioTab('world-builder')" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#00A2FF]">
+        <button onclick="switchZenvioTab('world-builder', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Constructor de Mundos
         </button>
       </div>
@@ -3349,7 +3349,7 @@ function closeZenvioChat() {
 }
 
 // Función para cambiar entre tabs de Atenis AI
-function switchZenvioTab(tabName) {
+function switchZenvioTab(tabName, evt) {
   // Ocultar todos los contenidos
   document.querySelectorAll('.zenvio-tab-content').forEach(content => {
     content.classList.add('hidden');
@@ -3357,7 +3357,7 @@ function switchZenvioTab(tabName) {
   
   // Remover active de todos los tabs
   document.querySelectorAll('.zenvio-tab').forEach(tab => {
-    tab.classList.remove('active', 'border-[#00A2FF]', 'text-[#00A2FF]');
+    tab.classList.remove('active', 'border-[#111111]', 'text-[#111111]');
     tab.classList.add('border-transparent', 'text-gray-600');
   });
   
@@ -3368,8 +3368,11 @@ function switchZenvioTab(tabName) {
   }
   
   // Activar el tab seleccionado
-  event.target.classList.add('active', 'border-[#00A2FF]', 'text-[#00A2FF]');
-  event.target.classList.remove('border-transparent', 'text-gray-600');
+  const targetTab = evt?.currentTarget || evt?.target;
+  if (targetTab) {
+    targetTab.classList.add('active', 'border-[#111111]', 'text-[#111111]');
+    targetTab.classList.remove('border-transparent', 'text-gray-600');
+  }
 }
 
 // Generador de Historias
@@ -5993,6 +5996,18 @@ function toggleClearButton(inputId, buttonId) {
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+
+  /* Uber style overrides para Atenis AI */
+  #zenvio-chat-view .bg-\[\#00A2FF\],
+  #zenvio-chat-view .hover\:bg-\[\#0066CC\]:hover {
+    background-color: #111111 !important;
+    color: #ffffff !important;
+  }
+
+  #zenvio-chat-view .focus\:ring-\[\#00A2FF\]:focus {
+    --tw-ring-color: rgba(17,17,17,0.3) !important;
   }
 
   /* Estilos del autor */
