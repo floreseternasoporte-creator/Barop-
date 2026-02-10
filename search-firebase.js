@@ -52,7 +52,7 @@ async function getAllStories() {
   }
 
   try {
-    const response = await fetch('/.netlify/functions/get-stories');
+    const response = await fetch('/api/get-stories');
     if (!response.ok) {
       throw new Error('No se pudo cargar historias');
     }
@@ -101,7 +101,7 @@ async function searchContent(query) {
   
   // Buscar autores
   try {
-    const response = await fetch('/.netlify/functions/users');
+    const response = await fetch('/api/users');
     if (!response.ok) {
       throw new Error('No se pudieron cargar autores');
     }
@@ -156,7 +156,7 @@ async function followUser(userId) {
   }
   
   try {
-    const response = await fetch('/.netlify/functions/following', {
+    const response = await fetch('/api/following', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
