@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require('../lib/aws-sdk');
 const { runVercelHandler } = require('../lib/vercel-adapter');
 
 const handlerModules = {
@@ -23,9 +23,25 @@ const handlerModules = {
   'users': '../lib/handlers/users'
 };
 
-const getRoute = (query) => {
+const getRouteInfo = (query) => {
   const rawPath = query?.path || query?.fn || [];
-  return Array.isArray(rawPath) ? rawPath[0] : rawPath;
+
+  if (Array.isArray(rawPath)) {
+    return {
+      route: rawPath[0],
+      pathParts: rawPath.slice(1).filter(Boolean)
+    };
+  }
+
+  if (typeof rawPath === 'string') {
+    const parts = rawPath.split('/').filter(Boolean);
+    return {
+      route: parts[0],
+      pathParts: parts.slice(1)
+    };
+  }
+
+  return { route: undefined, pathParts: [] };
 };
 
 const getAwsConfigFlags = () => ({
@@ -37,8 +53,22 @@ const getAwsConfigFlags = () => ({
 
 const resolveBucket = () => process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME;
 
+
+const renderPlaceholderSvg = (width, height) => {
+  const safeWidth = Number.isFinite(width) && width > 0 ? Math.min(width, 2000) : 400;
+  const safeHeight = Number.isFinite(height) && height > 0 ? Math.min(height, 2000) : 600;
+  const fontSize = Math.max(20, Math.round(Math.min(safeWidth, safeHeight) / 9));
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${safeWidth}" height="${safeHeight}" viewBox="0 0 ${safeWidth} ${safeHeight}">
+  <rect width="100%" height="100%" fill="#0a0a0a" />
+  <rect x="12" y="12" width="${safeWidth - 24}" height="${safeHeight - 24}" rx="20" ry="20" fill="#1f1f1f" stroke="#3a3a3a" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#ffffff" font-family="Inter, Arial, sans-serif" font-size="${fontSize}" font-weight="600">${safeWidth} × ${safeHeight}</text>
+</svg>`;
+};
+
 module.exports = async (req, res) => {
-  const route = getRoute(req.query);
+  const { route, pathParts } = getRouteInfo(req.query);
 
   if (route === 'health') {
     res.status(200).json({
@@ -46,6 +76,19 @@ module.exports = async (req, res) => {
       runtime: 'vercel-node',
       ...getAwsConfigFlags()
     });
+    return;
+  }
+
+
+  if (route === 'placeholder') {
+    const [widthRaw, heightRaw] = pathParts;
+    const width = parseInt(widthRaw, 10);
+    const height = parseInt(heightRaw, 10);
+
+    const svg = renderPlaceholderSvg(width, height);
+    res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.status(200).send(svg);
     return;
   }
 
