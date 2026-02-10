@@ -1,9 +1,9 @@
-const AWS = require('aws-sdk');
+const AWS = require('../lib/aws-sdk');
 
 const ses = new AWS.SES({
-  accessKeyId: process.env.ZENVIO_AWS_ACCESS_KEY || process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.ZENVIO_AWS_SECRET_KEY || process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.ZENVIO_AWS_REGION || process.env.AWS_REGION || 'us-east-2'
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION || 'us-east-2'
 });
 
 exports.handler = async (event) => {
@@ -15,9 +15,9 @@ exports.handler = async (event) => {
     const { email, problemType, description } = JSON.parse(event.body);
 
     const params = {
-      Source: process.env.SUPPORT_EMAIL || 'support@zenvio.app',
+      Source: process.env.SUPPORT_EMAIL || 'support@barop.app',
       Destination: {
-        ToAddresses: [process.env.SUPPORT_EMAIL || 'support@zenvio.app']
+        ToAddresses: [process.env.SUPPORT_EMAIL || 'support@barop.app']
       },
       Message: {
         Subject: { Data: `Soporte: ${problemType}` },

@@ -9,7 +9,7 @@
 ## Estructura en S3
 
 ```
-zenvio-storage/
+barop-storage/
 ├── notes/
 │   └── {userId}/
 │       └── {noteId}.json
