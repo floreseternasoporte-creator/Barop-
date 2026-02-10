@@ -9030,7 +9030,7 @@ function showLiveNotification(message, type = 'info') {
   }, 3000);
 }
 </script>
-<div id="live-stream-modal" class="fixed inset-0 bg-gradient-to-b from-[#393B3D] to-[#273852] z-50 hidden">
+<div id="live-stream-modal" class="fixed inset-0 bg-gradient-to-b from-[#393B3D] to-[#273852] z-[250] hidden">
   <div class="relative w-full h-full">
     <!-- Header con información del stream -->
     <div class="absolute top-0 left-0 right-0 p-4 z-10">
@@ -9086,7 +9086,7 @@ function showLiveNotification(message, type = 'info') {
     <!-- Spinner de carga -->
     <div id="live-spinner" class="absolute inset-0 flex items-center justify-center bg-black/70 hidden">
       <div class="text-center">
-        <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-[#00A2FF] mb-4"></div>
+        <div class="epic-loader mx-auto mb-4" aria-label="Conectando"></div>
         <p class="text-white text-lg">Conectando...</p>
       </div>
     </div>
@@ -9162,7 +9162,7 @@ function showLiveNotification(message, type = 'info') {
 </script>
 
 <!-- MODAL DE VISUALIZACIÓN EN VIVO (Espectador) -->
-<div id="live-view-modal" class="fixed inset-0 z-50 hidden">
+<div id="live-view-modal" class="fixed inset-0 z-[250] hidden">
   <div class="live-container bg-gradient-to-b from-[#393B3D] to-[#273852]" id="liveContainer">
     <!-- Top Bar -->
     <div class="top-bar">
@@ -9269,7 +9269,7 @@ function showLiveNotification(message, type = 'info') {
     <div id="hearts-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
     <!-- Botones laterales estilo Zenvio para espectador -->
-    <div class="side-buttons">
+    <div id="live-view-side-buttons" class="side-buttons">
       <div class="side-button">
         <div class="icon-button" id="heartButtonViewer" onclick="sendHeart()">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -10790,6 +10790,9 @@ async function likeNote(noteId) {
 
   function closeLiveStreamModal() {
     document.getElementById('live-stream-modal').classList.add('hidden');
+    const giftDrawer = document.getElementById('gift-drawer');
+    if (giftDrawer) giftDrawer.classList.remove('open');
+    setBottomNavVisible(true);
   }
 
   function closeLiveViewModal() {
@@ -10984,7 +10987,7 @@ async function likeNote(noteId) {
   }
 
   function hideViewerFunctions() {
-    const sideButtons = document.querySelector(".side-buttons");
+    const sideButtons = document.getElementById("live-view-side-buttons");
     if (sideButtons) {
       sideButtons.classList.add("hidden");
     }
@@ -10993,14 +10996,13 @@ async function likeNote(noteId) {
   }
 
   function showViewerFunctions() {
-    const sideButtons = document.querySelector(".side-buttons");
+    const sideButtons = document.getElementById("live-view-side-buttons");
     if (sideButtons) {
       sideButtons.classList.remove("hidden");
     }
     document.getElementById("viewer-tapCount").classList.remove("hidden");
     document.getElementById("likeCountLiveViewer").classList.remove("hidden");
   }
-</script>
 </script>
 
 <!-- JAVASCRIPT -->
@@ -14729,6 +14731,12 @@ async function likeNote(noteId) {
     });
   }
 
+  function setBottomNavVisible(visible) {
+    const bottomNav = document.getElementById('bottom-nav');
+    if (!bottomNav) return;
+    bottomNav.style.display = visible ? 'block' : 'none';
+  }
+
   function openLiveStreamModal() {
     const user = firebase.auth().currentUser;
     if (!user) {
@@ -14742,6 +14750,7 @@ async function likeNote(noteId) {
       return;
     }
 
+    setBottomNavVisible(false);
     startLiveStreamProcess();
   }
   
@@ -14870,6 +14879,9 @@ async function likeNote(noteId) {
     if (profileImg) {
       profileImg.classList.remove('live-border');
     }
+    const giftDrawer = document.getElementById('gift-drawer');
+    if (giftDrawer) giftDrawer.classList.remove('open');
+    setBottomNavVisible(true);
     stopListeningForGifts();
   }
 
@@ -14961,6 +14973,7 @@ async function likeNote(noteId) {
       }
     });
     document.getElementById('live-view-modal').classList.remove('hidden');
+    setBottomNavVisible(false);
     firebase.database().ref(`liveStreams/${broadcasterId}/views`).on('value', snapshot => {
       const views = snapshot.val() || 0;
       document.getElementById('viewerCountLive').textContent = views;
@@ -15002,6 +15015,10 @@ async function likeNote(noteId) {
   function closeLiveViewModal() {
     document.getElementById('live-view-modal').classList.add('hidden');
     document.getElementById('live-endedMessage') && document.getElementById('live-endedMessage').classList.add('hidden');
+    closeExpandedBanner();
+    const giftDrawer = document.getElementById('gift-drawer');
+    if (giftDrawer) giftDrawer.classList.remove('open');
+    setBottomNavVisible(true);
     if (window.currentViewerPC) {
       window.currentViewerPC.close();
       window.currentViewerPC = null;
