@@ -10416,8 +10416,16 @@ function openCreatorHub() {
         return;
       }
 
-      const snapshot = await firebase.database().ref('users/' + user.uid).once('value');
-      const userData = snapshot.val();
+      let userData = null;
+      try {
+        const userResponse = await fetch(`/api/users?userId=${user.uid}`);
+        if (userResponse.ok) {
+          const userResult = await userResponse.json();
+          userData = userResult.user || null;
+        }
+      } catch (profileError) {
+        console.warn('No se pudo cargar perfil desde AWS para nota:', profileError);
+      }
       
       let imageData = null;
       let fileName = null;
@@ -10486,167 +10494,6 @@ function openCreatorHub() {
     }
   }
 
-  function publishNoteToDatabase(note) {
-    // Verifica el contenido de la nota específicamente
-    if (moderarContenidoNota(note.content)) {
-      alert('Tu nota no puede ser publicada porque contiene contenido inapropiado.');
-      return;
-    }
-    
-    firebase.database().ref('communityNotes').push(note).then((ref) => {
-      // Verifica una vez más después de publicar (por si acaso)
-      moderarContenidoAutomaticamente(ref.key, note.content);
-      
-      document.getElementById('note-content').value = '';
-      document.getElementById('note-image').value = '';
-      document.getElementById('image-preview').classList.add('hidden');
-      switchCommunityTab('feed');
-    });
-  }
-
-  async function loadNotes() {
-    const feedContainer = document.getElementById('notes-feed');
-    feedContainer.innerHTML = '<div class="text-center py-8 flex justify-center"><div class="epic-loader" aria-label="Cargando"></div></div>';
-    
-    try {
-      const response = await fetch('/api/notes?limit=50');
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || 'Error al cargar notas');
-      }
-
-      feedContainer.innerHTML = '';
-      const notes = result.notes || [];
-
-      if (notes.length === 0) {
-        feedContainer.innerHTML = '<div class="text-center py-8 text-gray-500">No hay notas aún. ¡Sé el primero en publicar!</div>';
-        return;
-      }
-
-      notes.forEach(note => {
-        const noteElement = document.createElement('div');
-        noteElement.className = 'bg-white p-4 rounded-xl shadow';
-        noteElement.innerHTML = `
-          <div class="flex items-center mb-3">
-            <img src="${note.authorImage}" alt="${note.authorName}" class="w-10 h-10 rounded-full mr-3">
-            <div>
-              <h3 class="font-bold">${note.authorName}</h3>
-              <p class="text-sm text-gray-500">${new Date(note.timestamp).toLocaleString()}</p>
-            </div>
-          </div>
-          <p class="mb-3">${note.content}</p>
-          ${note.imageUrl ? `<img src="${note.imageUrl}" alt="Imagen de nota" class="w-full rounded-lg mb-3 max-h-96 object-cover">` : ''}
-          <div class="flex items-center space-x-4">
-            <button id="like-btn-${note.noteId}" onclick="likeNote('${note.noteId}')" class="flex items-center text-[#00A2FF] hover:text-red-600 transition-colors">
-              <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-              <span id="like-count-${note.noteId}">${note.likes || 0}</span>
-            </button>
-            ${note.authorId === firebase.auth().currentUser?.uid ? 
-              `<button onclick="deleteNote('${note.noteId}')" class="text-red-500 hover:text-red-700">
-                <i class="fas fa-trash"></i> Eliminar
-              </button>` : 
-              `<button onclick="reportNote('${note.noteId}')" class="text-gray-500 hover:text-gray-700 flex items-center">
-                <i class="fas fa-flag mr-1"></i> Reportar
-              </button>`
-            }
-          </div>
-        `;
-        
-        feedContainer.appendChild(noteElement);
-      });
-    } catch (error) {
-      console.error('Error al cargar notas:', error);
-      feedContainer.innerHTML = '<div class="text-center py-8 text-red-500">Error al cargar notas. Por favor recarga la página.</div>';
-    }
-  }
-
-  function moderarContenidoNota(texto) {
-  const palabrasProhibidasNotas = [
-    // Insultos y lenguaje ofensivo
-    "idiota", "estúpido", "imbécil", "tonto", "pendejo",
-    "maldito", "puta", "mierda", "carajo", "joder",
-    "perra", "zorra", "maricón", "puto", "cabrón",
-    // Discriminación
-    "negro", "sudaca", "indio", "gitano", "judio",
-    // Contenido inapropiado
-    "xxx", "porn", "sex", "desnudo",
-    // Violencia
-    "matar", "muerte", "suicidio", "sangre",
-    // Spam y estafas
-    "ganar dinero", "hazte rico", "click aquí",
-    // Enlaces maliciosos
-    "bit.ly", "acortar.link", "short.io"
-  ];
-  
-  const textoNormalizado = texto.toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z\s]/g, ''); // Elimina caracteres especiales
-    
-  // Busca palabras completas, no partes de palabras
-  const palabras = textoNormalizado.split(/\s+/);
-  return palabras.some(palabra => 
-    palabrasOfensivas.includes(palabra) ||
-    palabrasOfensivas.some(palabraOfensiva => 
-      palabra.includes(palabraOfensiva) && palabra.length < palabraOfensiva.length + 3
-    )
-  );
-}
-
-function moderarContenidoAutomaticamente(noteId, content) {
-  if (contienePalabrasOfensivas(content)) {
-    firebase.database().ref('communityNotes/' + noteId).remove()
-      .then(() => {
-        console.log('Nota eliminada por contener lenguaje ofensivo');
-        alert('Tu nota ha sido eliminada por contener lenguaje inapropiado.');
-      });
-    return true;
-  }
-  return false;
-}
-
-function contieneContenidoInapropiado(texto) {
-  const patronesInapropiados = [
-    /\b(?:porn|xxx)\b/i,
-    /\b(?:kill|murder)\b/i,
-    /\b(?:suicide|death)\b/i,
-    /\b(?:cocaine|heroin|drugs)\b/i,
-    /\b(?:terrorist|bomb)\b/i
-  ];
-  
-  return patronesInapropiados.some(patron => patron.test(texto));
-}
-
-function moderarNota(noteId, content) {
-  const loadingDiv = document.createElement('div');
-  loadingDiv.innerHTML = `
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-[#00A2FF] mx-auto mb-4"></div>
-        <p>Analizando contenido...</p>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(loadingDiv);
-
-  setTimeout(() => {
-    document.body.removeChild(loadingDiv);
-    
-    if (contienePalabrasOfensivas(content)) {
-      firebase.database().ref('communityNotes/' + noteId).remove();
-      alert('La nota ha sido eliminada por contener lenguaje ofensivo.');
-    } else if (contieneContenidoInapropiado(content)) {
-      firebase.database().ref('communityNotes/' + noteId).update({
-        blocked: true,
-        blockReason: 'Contenido inapropiado detectado'
-      });
-      alert('La nota ha sido bloqueada por posible contenido inapropiado.');
-    }
-  }, 5000);
-}
 
 	async function deleteNote(noteId) {
 	  if (!confirm('¿Estás seguro de que quieres eliminar esta nota?')) return;
@@ -12880,31 +12727,29 @@ async function likeNote(noteId) {
 
   // La funcionalidad de subida de foto usa handleEditProfileImageUpload (unificada)
 
-  function loadUserNotes() {
+  async function loadUserNotes() {
     const user = firebase.auth().currentUser;
     if (!user) return;
 
     const notesContainer = document.getElementById('notes-tab-content');
-    
-    firebase.database().ref('communityNotes').orderByChild('authorId').equalTo(user.uid).once('value').then(snapshot => {
-      let notesHTML = '<h2 class="text-2xl font-bold mb-6">Mis Notas</h2>';
-      
-      if (snapshot.exists()) {
-        const notes = [];
-        snapshot.forEach(child => {
-          notes.push({...child.val(), id: child.key});
-        });
-        
-        notes.sort((a, b) => b.timestamp - a.timestamp);
-        
+    if (!notesContainer) return;
+
+    let notesHTML = '<h2 class="text-2xl font-bold mb-6">Mis Notas</h2>';
+
+    try {
+      const response = await fetch(`/api/notes?userId=${user.uid}&limit=100`);
+      const result = await response.json();
+      const notes = (result.notes || []).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+      if (notes.length > 0) {
         notesHTML += '<div class="grid grid-cols-1 gap-4">';
         notes.forEach(note => {
           notesHTML += `
             <div class="bg-white p-4 rounded-xl border hover:shadow-md transition-shadow">
-              <p class="mb-3">${note.content}</p>
+              <p class="mb-3">${note.content || ''}</p>
               ${note.imageUrl ? `<img src="${note.imageUrl}" alt="Imagen de la nota" class="w-full rounded-lg mb-3 max-h-48 object-cover">` : ''}
               <div class="flex items-center justify-between text-sm text-gray-500">
-                <span>${new Date(note.timestamp).toLocaleDateString()}</span>
+                <span>${new Date(note.timestamp || Date.now()).toLocaleDateString()}</span>
                 <span>❤️ ${note.likes || 0}</span>
               </div>
             </div>
@@ -12914,9 +12759,12 @@ async function likeNote(noteId) {
       } else {
         notesHTML += '<p class="text-gray-600">No has publicado ninguna nota aún. Ve a la comunidad para crear tu primera nota.</p>';
       }
-      
-      notesContainer.innerHTML = notesHTML;
-    });
+    } catch (error) {
+      console.error('Error cargando notas del usuario:', error);
+      notesHTML += '<p class="text-red-500">No se pudieron cargar tus notas.</p>';
+    }
+
+    notesContainer.innerHTML = notesHTML;
   }
 
   function closeProfileEdit() {
@@ -17114,7 +16962,6 @@ firebase.auth().onAuthStateChanged(user => {
 </script>
 
 <script src="stories.js"></script>
-<script src="community-firebase.js"></script>
 <script src="search-firebase.js"></script>
 </body>
 </html>
