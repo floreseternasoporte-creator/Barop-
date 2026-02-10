@@ -1,10 +1,10 @@
-# Configuración de Netlify Functions
+# Configuración de Vercel Functions
 
 ## Arquitectura
 - **Firebase**: Solo autenticación
 - **AWS S3**: TODO (datos + imágenes)
 - **AWS SES**: Emails
-- **Netlify Functions**: Serverless
+- **Vercel Functions**: Serverless
 
 ## Estructura en S3
 
@@ -55,7 +55,6 @@ SUPPORT_EMAIL
 ## Instalación
 
 ```bash
-cd netlify/functions
 npm install
 ```
 
