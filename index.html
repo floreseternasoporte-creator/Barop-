@@ -230,44 +230,58 @@ body {
   z-index: 10;
 }
 
-/* ANIMACIÓN DE CARGA EN BÚSQUEDA */
-#search-loading {
-  position: relative;
-  width: 50px;
-  height: 50px;
+/* LOADER MODERNO GLOBAL (ESTILO UBER) */
+.epic-loader {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #111111 0%, #252525 100%);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 14px 30px rgba(17, 17, 17, 0.25);
 }
 
-#search-loading .dot {
+.epic-loader::before,
+.epic-loader::after {
+  content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  background-color: #111111;
-  border-radius: 50%;
-  animation: dotRotate 4s linear infinite;
+  width: 12px;
+  height: 32px;
+  border-radius: 999px;
+  background: #fff;
+  animation: epicPulse 1.1s ease-in-out infinite;
 }
 
-#search-loading .dot:nth-child(2) {
-  animation-delay: -2s;
+.epic-loader::before {
+  transform: translateX(-10px);
 }
 
-@keyframes dotRotate {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg) translateX(20px) rotate(0deg);
-  }
-  25% {
-    transform: translate(-50%, -50%) rotate(90deg) translateX(20px) rotate(-90deg);
-  }
-  50% {
-    transform: translate(-50%, -50%) rotate(180deg) translateX(20px) rotate(-180deg);
-  }
-  75% {
-    transform: translate(-50%, -50%) rotate(270deg) translateX(20px) rotate(-270deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg) translateX(20px) rotate(-360deg);
-  }
+.epic-loader::after {
+  transform: translateX(10px);
+  animation-delay: 0.18s;
+}
+
+@keyframes epicPulse {
+  0%, 100% { transform: translateX(var(--x, 0)) scaleY(0.6); opacity: 0.55; }
+  50% { transform: translateX(var(--x, 0)) scaleY(1); opacity: 1; }
+}
+
+.epic-loader::before { --x: -10px; }
+.epic-loader::after { --x: 10px; }
+
+#profile-edit-modal {
+  background: #f6f6f6;
+}
+
+#profile-edit-modal .lg\:flex,
+#profile-edit-modal .block.lg\:hidden {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+#profile-edit-modal .bg-white {
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 8px 24px rgba(17, 17, 17, 0.04);
 }
 
 /* ANIMACIÓN PARA BORDE "LIVE" */
@@ -1857,12 +1871,12 @@ setInterval(checkScheduledChapters, 60000);
 
 <!-- SPINNER DE CERRAR SESIÓN -->
 <div id="signout-spinner" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 hidden">
-  <i class="fas fa-spinner fa-spin text-4xl" style="color:#58CC02;"></i>
+  <div class="epic-loader" aria-label="Procesando"></div>
 </div>
 
 <!-- SPINNER PARA PUBLICAR HISTORIA -->
 <div id="story-upload-spinner" class="fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50 hidden">
-  <i class="fas fa-spinner fa-spin text-4xl" style="color:#58CC02;"></i>
+  <div class="epic-loader" aria-label="Subiendo"></div>
 </div>
 
 
@@ -4218,15 +4232,9 @@ function escapeHtml(text) {
     </div>
   </div>
 
-  <!-- Animación de carga Baro -->
+  <!-- Animación de carga moderna -->
   <div id="search-loading" class="hidden flex items-center justify-center py-20">
-    <div class="baro-infinity-loader">
-      <div class="infinity-symbol">
-        <div class="infinity-path"></div>
-        <div class="infinity-path"></div>
-      </div>
-      <div class="baro-text">Buscando...</div>
-    </div>
+    <div class="epic-loader" aria-label="Buscando"></div>
   </div>
 
   <div class="p-4">
@@ -4268,76 +4276,6 @@ function escapeHtml(text) {
     </div>
   </div>
 </div>
-
-<style>
-/* Animación Baro Infinity Loader */
-.baro-infinity-loader {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.infinity-symbol {
-  position: relative;
-  width: 60px;
-  height: 30px;
-}
-
-.infinity-path {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  border: 3px solid transparent;
-  border-radius: 50%;
-  animation: infinity-rotate 2s linear infinite;
-}
-
-.infinity-path:first-child {
-  left: 0;
-  border-top-color: #111111;
-  border-right-color: #111111;
-  animation-delay: 0s;
-}
-
-.infinity-path:last-child {
-  right: 0;
-  border-bottom-color: #2b2b2b;
-  border-left-color: #2b2b2b;
-  animation-delay: -1s;
-}
-
-@keyframes infinity-rotate {
-  0% {
-    transform: rotate(0deg) scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: rotate(180deg) scale(0.8);
-    opacity: 0.7;
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-    opacity: 1;
-  }
-}
-
-.baro-text {
-  font-size: 14px;
-  font-weight: 600;
-  color: #6b7280;
-  animation: pulse-text 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse-text {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-</style>
 
 <script>
 // Funciones de navegación principales
@@ -9175,7 +9113,7 @@ function showLiveNotification(message, type = 'info') {
   <div class="bg-white p-6 rounded-xl text-center max-w-md mx-4">
     <!-- Spinner animado (usamos Font Awesome para el spinner) -->
     <div class="spinner mb-4">
-      <i class="fas fa-spinner fa-spin fa-3x" style="color:#00D6C9;"></i>
+      <div class="epic-loader" aria-label="Preparando directo"></div>
     </div>
     <p class="text-lg font-bold mb-2">Función no disponible</p>
     <p class="text-sm">
@@ -9387,7 +9325,7 @@ function showLiveNotification(message, type = 'info') {
 	  const photosGrid = document.getElementById('photos-grid');
 	  if (!photosGrid) return;
 	  
-	  photosGrid.innerHTML = '<div class="col-span-2 text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i><p class="mt-2 text-gray-500">Cargando fotos...</p></div>';
+	  photosGrid.innerHTML = '<div class="col-span-2 text-center py-8"><div class='flex justify-center'><div class='epic-loader' aria-label='Cargando fotos'></div></div></div>';
 
   try {
     const response = await fetch('/api/notes?limit=50');
@@ -10328,8 +10266,8 @@ function openCreatorHub() {
     const storiesCountEl = document.getElementById('creator-stories-count');
     const notesCountEl = document.getElementById('creator-notes-count');
     
-    if (storiesCountEl) storiesCountEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    if (notesCountEl) notesCountEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    if (storiesCountEl) storiesCountEl.innerHTML = '<span class="inline-flex justify-center"><span class="epic-loader" style="width:20px;height:20px;border-radius:6px;"></span></span>';
+    if (notesCountEl) notesCountEl.innerHTML = '<span class="inline-flex justify-center"><span class="epic-loader" style="width:20px;height:20px;border-radius:6px;"></span></span>';
 
     try {
       // Cargar estadísticas de historias desde AWS S3
@@ -10470,7 +10408,7 @@ function openCreatorHub() {
 
     const publishButton = document.querySelector('button[onclick="publishNote()"]');
     publishButton.disabled = true;
-    publishButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Publicando...';
+    publishButton.innerHTML = '<span class="inline-flex items-center gap-2"><span class="epic-loader" style="width:24px;height:24px;border-radius:8px;"></span><span>Publicando</span></span>';
 
     try {
       // Primero verificar límites
@@ -10584,7 +10522,7 @@ function openCreatorHub() {
 
   async function loadNotes() {
     const feedContainer = document.getElementById('notes-feed');
-    feedContainer.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i></div>';
+    feedContainer.innerHTML = '<div class="text-center py-8 flex justify-center"><div class="epic-loader" aria-label="Cargando"></div></div>';
     
     try {
       const response = await fetch('/api/notes?limit=50');
@@ -12197,11 +12135,7 @@ async function likeNote(noteId) {
     const mainAppContainer = document.getElementById('main-app');
     
     if (user) {
-      if (authorizedEmails.includes(user.email)) {
-        document.getElementById('live-transmit-btn').style.display = "block";
-      } else {
-        document.getElementById('live-transmit-btn').style.display = "none";
-      }
+      document.getElementById('live-transmit-btn').style.display = "block";
       
       // CARGAR ESTADÍSTICAS EN TIEMPO REAL
       loadUserStats(user.uid);
@@ -12363,7 +12297,7 @@ async function likeNote(noteId) {
     
     const btn = document.getElementById('btn-send-support');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
+    btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="epic-loader" style="width:20px;height:20px;border-radius:6px;"></span><span>Enviando</span></span>';
     
     try {
       const response = await fetch('/api/send-support-email', {
@@ -14394,7 +14328,7 @@ async function likeNote(noteId) {
     }
     
     try {
-      buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+      buttonElement.innerHTML = '<span class="inline-flex"><span class="epic-loader" style="width:16px;height:16px;border-radius:5px;"></span></span>';
       buttonElement.disabled = true;
       
       await firebase.database().ref('following/' + user.uid + '/' + authorId).set(true);
@@ -14819,27 +14753,13 @@ async function likeNote(noteId) {
       return;
     }
     
-    // Verificar que el usuario tenga más de 2000 seguidores
-    firebase.database().ref('users/' + user.uid).once('value').then(snapshot => {
-      const userData = snapshot.val();
-      const followersCount = userData?.followersCount || 0;
-      
-      if (followersCount < 2000) {
-        alert(`Necesitas al menos 2000 seguidores para transmitir en vivo. Actualmente tienes ${followersCount} seguidores.`);
-        return;
-      }
-      
-      // Continuar con la transmisión en vivo
-      if (!user.email) {
-        alert("Por favor verifica tu correo electrónico para transmitir en vivo.");
-        return;
-      }
-      
-      startLiveStreamProcess();
-    }).catch(error => {
-      console.error('Error verificando seguidores:', error);
-      alert('Error al verificar tus seguidores. Intenta de nuevo.');
-    });
+    // Live habilitado para todos los usuarios autenticados
+    if (!user.email) {
+      alert("Por favor verifica tu correo electrónico para transmitir en vivo.");
+      return;
+    }
+
+    startLiveStreamProcess();
   }
   
   function startLiveStreamProcess() {
@@ -16892,8 +16812,8 @@ function analyzeAccount() {
   analysisModal.innerHTML = `
     <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
       <div id="analysis-loading" class="text-center">
-        <div class="spinner-ring mb-4">
-          <div></div><div></div><div></div><div></div>
+        <div class="mb-4 flex justify-center">
+          <div class="epic-loader" aria-label="Analizando"></div>
         </div>
         <h3 class="text-xl font-bold mb-2">Analizando cuenta</h3>
         <p id="analysis-status" class="text-gray-600">Recopilando datos...</p>
@@ -16915,36 +16835,6 @@ function analyzeAccount() {
 
   document.body.appendChild(analysisModal);
 
-  // Add spinner styles
-  const style = document.createElement('style');
-  style.textContent = `
-    .spinner-ring {
-      display: inline-block;
-      position: relative;
-      width: 80px;
-      height: 80px;
-    }
-    .spinner-ring div {
-      box-sizing: border-box;
-      display: block;
-      position: absolute;
-      width: 64px;
-      height: 64px;
-      margin: 8px;
-      border: 8px solid #00A2FF;
-      border-radius: 50%;
-      animation: spinner-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-      border-color: #00A2FF transparent transparent transparent;
-    }
-    .spinner-ring div:nth-child(1) { animation-delay: -0.45s; }
-    .spinner-ring div:nth-child(2) { animation-delay: -0.3s; }
-    .spinner-ring div:nth-child(3) { animation-delay: -0.15s; }
-    @keyframes spinner-ring {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
 
   // Start analysis
   let statusText = document.getElementById('analysis-status');
@@ -17158,25 +17048,9 @@ function closeZenvioStudio() {
 </div>
 
 <!-- Global Loading Spinner -->
-<div id="global-loader" class="fixed inset-0 bg-black bg-opacity-50 z-[9999] hidden items-center justify-center">
-  <div class="loader"></div>
+<div id="global-loader" class="fixed inset-0 bg-black bg-opacity-40 z-[9999] hidden items-center justify-center">
+  <div class="epic-loader" aria-label="Cargando"></div>
 </div>
-
-<style>
-.loader {
-  border: 4px solid rgba(254, 44, 85, 0.1);
-  border-radius: 50%;
-  border-top: 4px solid #00A2FF;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
 
 <script>
 // Global loading spinner functions
