@@ -120,7 +120,7 @@
 ## 🎨 MEJORAS VISUALES ESTILO INSTAGRAM
 
 ### Colores
-- Primary: `#00A2FF` (Azul Zenvio)
+- Primary: `#00A2FF` (Azul Barop)
 - Secondary: `#ff6b7a` (Rosa)
 - Accent: `#10a37f` (Verde)
 - Background: `#F2F4F5` (Gris claro)

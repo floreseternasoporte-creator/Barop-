@@ -215,7 +215,7 @@ class PremiumIntroAnimation {
         <div class="shape square" style="bottom: 20%; right: 10%; animation-delay: 3s;"></div>
       </div>
 
-      <div class="premium-logo">Zenvio</div>
+      <div class="premium-logo">Barop</div>
       <div class="premium-tagline">Tu universo de historias te espera</div>
 
       <div class="premium-progress">
@@ -242,7 +242,7 @@ class PremiumIntroAnimation {
       'Cargando historias increíbles...',
       'Conectando con escritores...',
       'Preparando la magia...',
-      '¡Bienvenido a Zenvio!'
+      '¡Bienvenido a Barop!'
     ];
 
     let messageIndex = 0;

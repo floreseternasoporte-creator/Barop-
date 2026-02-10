@@ -532,7 +532,7 @@ body {
       z-index: 10000;
     }
 
-    /* VISTA LIVE (Estilo Zenvio) */
+    /* VISTA LIVE (Estilo Barop) */
     :root {
       --beaboo-primary: #111111;
       --beaboo-secondary: #2b2b2b;
@@ -610,7 +610,7 @@ body {
       font-weight: 500;
     }
 
-    /* Botones laterales con estilo Zenvio */
+    /* Botones laterales con estilo Barop */
     .icon-button {
       width: 50px;
       height: 50px;
@@ -3068,12 +3068,12 @@ firebase.auth().onAuthStateChanged(user => {
 
 
 
-<!-- VISTA ZENVIO AI CHAT -->
-<div id="zenvio-chat-view" class="fixed inset-0 bg-white text-black hidden z-50 overflow-hidden">
+<!-- VISTA BAROP AI CHAT -->
+<div id="barop-chat-view" class="fixed inset-0 bg-white text-black hidden z-50 overflow-hidden">
   <div class="h-full flex flex-col">
     <!-- Header -->
     <div class="flex-shrink-0 p-4 flex items-center justify-between border-b border-gray-200">
-      <button onclick="closeZenvioChat()" class="text-gray-700 hover:text-gray-900 transition-colors">
+      <button onclick="closeBaropChat()" class="text-gray-700 hover:text-gray-900 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
         </svg>
@@ -3087,7 +3087,7 @@ firebase.auth().onAuthStateChanged(user => {
           <circle cx="12" cy="9" r="1.5" fill="white" opacity="0.8"/>
         </svg>
       </h1>
-      <button onclick="openZenvioMenu()" class="text-gray-700 hover:text-[#111111] transition-colors">
+      <button onclick="openBaropMenu()" class="text-gray-700 hover:text-[#111111] transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="5" r="1"/>
           <circle cx="12" cy="12" r="1"/>
@@ -3099,26 +3099,26 @@ firebase.auth().onAuthStateChanged(user => {
     <!-- Tabs de funcionalidades -->
     <div class="flex-shrink-0 border-b border-gray-200 bg-white">
       <div class="flex overflow-x-auto scrollbar-hide">
-        <button onclick="switchZenvioTab('chat', event)" class="zenvio-tab active px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-[#111111] text-[#111111]">
+        <button onclick="switchBaropTab('chat', event)" class="barop-tab active px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-[#111111] text-[#111111]">
           Chat
         </button>
-        <button onclick="switchZenvioTab('story-generator', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
+        <button onclick="switchBaropTab('story-generator', event)" class="barop-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Generador de Historias
         </button>
-        <button onclick="switchZenvioTab('character-creator', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
+        <button onclick="switchBaropTab('character-creator', event)" class="barop-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Creador de Personajes
         </button>
-        <button onclick="switchZenvioTab('plot-twist', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
+        <button onclick="switchBaropTab('plot-twist', event)" class="barop-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Giros de Trama
         </button>
-        <button onclick="switchZenvioTab('world-builder', event)" class="zenvio-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
+        <button onclick="switchBaropTab('world-builder', event)" class="barop-tab px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-gray-600 hover:text-[#111111]">
           Constructor de Mundos
         </button>
       </div>
     </div>
 
     <!-- Chat Tab -->
-    <div id="zenvio-tab-chat" class="zenvio-tab-content flex-1 flex flex-col overflow-hidden">
+    <div id="barop-tab-chat" class="barop-tab-content flex-1 flex flex-col overflow-hidden">
       <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
         <!-- Mensaje de bienvenida -->
         <div class="flex items-start space-x-3">
@@ -3155,7 +3155,7 @@ firebase.auth().onAuthStateChanged(user => {
     </div>
 
     <!-- Story Generator Tab -->
-    <div id="zenvio-tab-story-generator" class="zenvio-tab-content hidden flex-1 overflow-y-auto p-4">
+    <div id="barop-tab-story-generator" class="barop-tab-content hidden flex-1 overflow-y-auto p-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-6">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Generador de Historias</h2>
@@ -3208,7 +3208,7 @@ firebase.auth().onAuthStateChanged(user => {
     </div>
 
     <!-- Character Creator Tab -->
-    <div id="zenvio-tab-character-creator" class="zenvio-tab-content hidden flex-1 overflow-y-auto p-4">
+    <div id="barop-tab-character-creator" class="barop-tab-content hidden flex-1 overflow-y-auto p-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-6">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Creador de Personajes</h2>
@@ -3249,7 +3249,7 @@ firebase.auth().onAuthStateChanged(user => {
     </div>
 
     <!-- Plot Twist Tab -->
-    <div id="zenvio-tab-plot-twist" class="zenvio-tab-content hidden flex-1 overflow-y-auto p-4">
+    <div id="barop-tab-plot-twist" class="barop-tab-content hidden flex-1 overflow-y-auto p-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-6">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Generador de Giros de Trama</h2>
@@ -3285,7 +3285,7 @@ firebase.auth().onAuthStateChanged(user => {
     </div>
 
     <!-- World Builder Tab -->
-    <div id="zenvio-tab-world-builder" class="zenvio-tab-content hidden flex-1 overflow-y-auto p-4">
+    <div id="barop-tab-world-builder" class="barop-tab-content hidden flex-1 overflow-y-auto p-4">
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-6">
           <h2 class="text-2xl font-bold text-gray-900 mb-2">Constructor de Mundos</h2>
@@ -3330,17 +3330,17 @@ firebase.auth().onAuthStateChanged(user => {
 </div>
 
 <script>
-function openZenvioChat() {
+function openBaropChat() {
   document.getElementById('creator-hub-view').classList.add('hidden');
-  document.getElementById('zenvio-chat-view').classList.remove('hidden');
+  document.getElementById('barop-chat-view').classList.remove('hidden');
   
   // Ocultar barra de navegación inferior
   const bottomNav = document.getElementById('bottom-nav');
   if (bottomNav) bottomNav.style.display = 'none';
 }
 
-function closeZenvioChat() {
-  document.getElementById('zenvio-chat-view').classList.add('hidden');
+function closeBaropChat() {
+  document.getElementById('barop-chat-view').classList.add('hidden');
   document.getElementById('creator-hub-view').classList.remove('hidden');
   
   // Mostrar barra de navegación inferior
@@ -3349,20 +3349,20 @@ function closeZenvioChat() {
 }
 
 // Función para cambiar entre tabs de Atenis AI
-function switchZenvioTab(tabName, evt) {
+function switchBaropTab(tabName, evt) {
   // Ocultar todos los contenidos
-  document.querySelectorAll('.zenvio-tab-content').forEach(content => {
+  document.querySelectorAll('.barop-tab-content').forEach(content => {
     content.classList.add('hidden');
   });
   
   // Remover active de todos los tabs
-  document.querySelectorAll('.zenvio-tab').forEach(tab => {
+  document.querySelectorAll('.barop-tab').forEach(tab => {
     tab.classList.remove('active', 'border-[#111111]', 'text-[#111111]');
     tab.classList.add('border-transparent', 'text-gray-600');
   });
   
   // Mostrar el contenido seleccionado
-  const selectedContent = document.getElementById(`zenvio-tab-${tabName}`);
+  const selectedContent = document.getElementById(`barop-tab-${tabName}`);
   if (selectedContent) {
     selectedContent.classList.remove('hidden');
   }
@@ -3655,7 +3655,7 @@ function copyWorld() {
 }
 
 // Menú de Atenis AI
-function openZenvioMenu() {
+function openBaropMenu() {
   const menu = document.createElement('div');
   menu.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]';
   menu.innerHTML = `
@@ -4102,7 +4102,7 @@ function escapeHtml(text) {
         </svg>
       </button>
       <h1 class="text-lg font-semibold text-gray-900">Crear</h1>
-      <button onclick="openZenvioChat()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+      <button onclick="openBaropChat()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
         <img src="https://i.ibb.co/21fZ5Wkp/IMG-7701.png" alt="Baro" class="h-7 w-7 rounded-full">
       </button>
     </div>
@@ -4665,7 +4665,7 @@ function toggleClearButton(inputId, buttonId) {
       
       const response = await fetch(searchUrl, {
         headers: {
-          'User-Agent': 'ZenvioApp/1.0'
+          'User-Agent': 'BaropApp/1.0'
         }
       });
       
@@ -5326,7 +5326,7 @@ function toggleClearButton(inputId, buttonId) {
   function downloadGeneratedImage() {
     const generatedImageSrc = document.getElementById('generated-image').src;
     const link = document.createElement('a');
-    link.download = 'imagen-generada-zenvio.jpg';
+    link.download = 'imagen-generada-barop.jpg';
     link.href = generatedImageSrc;
     link.click();
   }
@@ -5338,9 +5338,9 @@ function toggleClearButton(inputId, buttonId) {
       fetch(generatedImageSrc)
         .then(res => res.blob())
         .then(blob => {
-          const file = new File([blob], 'imagen-zenvio.jpg', { type: 'image/jpeg' });
+          const file = new File([blob], 'imagen-barop.jpg', { type: 'image/jpeg' });
           navigator.share({
-            title: 'Imagen generada con Zenvio IA',
+            title: 'Imagen generada con Barop IA',
             files: [file]
           });
         });
@@ -5898,21 +5898,21 @@ function toggleClearButton(inputId, buttonId) {
   }
 
   /* Animaciones Atenis AI */
-  .zenvio-ai-icon {
-    animation: zenvioFloat 3s ease-in-out infinite, zenvioGlow 2s ease-in-out infinite;
+  .barop-ai-icon {
+    animation: baropFloat 3s ease-in-out infinite, baropGlow 2s ease-in-out infinite;
   }
   
-  .zenvio-rocket {
+  .barop-rocket {
     animation: rocketFly 2s ease-in-out infinite;
     transform-origin: center;
   }
   
-  .zenvio-rocket-small {
+  .barop-rocket-small {
     animation: rocketFlySmall 2.5s ease-in-out infinite;
     transform-origin: center;
   }
   
-  @keyframes zenvioFloat {
+  @keyframes baropFloat {
     0%, 100% {
       transform: translateY(0px) rotate(0deg);
     }
@@ -5927,7 +5927,7 @@ function toggleClearButton(inputId, buttonId) {
     }
   }
   
-  @keyframes zenvioGlow {
+  @keyframes baropGlow {
     0%, 100% {
       box-shadow: 0 0 20px rgba(168, 85, 247, 0.4), 0 0 40px rgba(236, 72, 153, 0.2);
     }
@@ -5964,16 +5964,16 @@ function toggleClearButton(inputId, buttonId) {
   }
 
   /* Estilos para tabs de Atenis AI */
-  .zenvio-tab {
+  .barop-tab {
     transition: all 0.3s ease;
   }
   
-  .zenvio-tab.active {
+  .barop-tab.active {
     border-color: #111111;
     color: #111111;
   }
   
-  .zenvio-tab-content {
+  .barop-tab-content {
     animation: fadeIn 0.3s ease-in-out;
   }
   
@@ -6000,13 +6000,13 @@ function toggleClearButton(inputId, buttonId) {
 
 
   /* Uber style overrides para Atenis AI */
-  #zenvio-chat-view .bg-\[\#00A2FF\],
-  #zenvio-chat-view .hover\:bg-\[\#0066CC\]:hover {
+  #barop-chat-view .bg-\[\#00A2FF\],
+  #barop-chat-view .hover\:bg-\[\#0066CC\]:hover {
     background-color: #111111 !important;
     color: #ffffff !important;
   }
 
-  #zenvio-chat-view .focus\:ring-\[\#00A2FF\]:focus {
+  #barop-chat-view .focus\:ring-\[\#00A2FF\]:focus {
     --tw-ring-color: rgba(17,17,17,0.3) !important;
   }
 
@@ -9281,7 +9281,7 @@ function showLiveNotification(message, type = 'info') {
     <!-- Contenedor para corazones animados -->
     <div id="hearts-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
 
-    <!-- Botones laterales estilo Zenvio para espectador -->
+    <!-- Botones laterales estilo Barop para espectador -->
     <div id="live-view-side-buttons" class="side-buttons">
       <div class="side-button">
         <div class="icon-button" id="heartButtonViewer" onclick="sendHeart()">
@@ -9403,8 +9403,8 @@ function showLiveNotification(message, type = 'info') {
         <span class="text-[#00D6C9]">Diamante</span>
       </div>
       <div class="gift-item bg-black/20 backdrop-blur-sm rounded-lg" onclick="sendGift('oso_beaboo')">
-        <img src="https://www.icegif.com/wp-content/uploads/2021/11/icegif-346.gif" alt="oso Zenvio">
-        <span class="text-[#00D6C9]">oso Zenvio</span>
+        <img src="https://www.icegif.com/wp-content/uploads/2021/11/icegif-346.gif" alt="oso Barop">
+        <span class="text-[#00D6C9]">oso Barop</span>
       </div>
       <div class="gift-item bg-black/20 backdrop-blur-sm rounded-lg" onclick="sendGift('oso_saltarin')">
         <img src="https://www.icegif.com/wp-content/uploads/2021/11/icegif-347.gif" alt="oso saltarín">
@@ -10221,7 +10221,7 @@ function openCreatorHub() {
     document.getElementById('search-view').classList.add('hidden');
     document.getElementById('profile-view').classList.add('hidden');
     document.getElementById('community-view').classList.add('hidden');
-    document.getElementById('zenvio-chat-view').classList.add('hidden');
+    document.getElementById('barop-chat-view').classList.add('hidden');
     
     // Mostrar creator hub
     document.getElementById('creator-hub-view').classList.remove('hidden');
@@ -10309,7 +10309,7 @@ function openCreatorHub() {
     document.getElementById('search-view').classList.add('hidden');
     document.getElementById('profile-view').classList.add('hidden');
     document.getElementById('creator-hub-view').classList.add('hidden');
-    document.getElementById('zenvio-chat-view').classList.add('hidden');
+    document.getElementById('barop-chat-view').classList.add('hidden');
     
     // Mostrar community
     document.getElementById('community-view').classList.remove('hidden');
@@ -10874,7 +10874,7 @@ async function likeNote(noteId) {
     document.getElementById('search-view').classList.add('hidden');
     document.getElementById('profile-view').classList.add('hidden');
     document.getElementById('creator-hub-view').classList.add('hidden');
-    document.getElementById('zenvio-chat-view').classList.add('hidden');
+    document.getElementById('barop-chat-view').classList.add('hidden');
     
     // Mostrar main-app
     const mainApp = document.getElementById('main-app');
@@ -10895,7 +10895,7 @@ async function likeNote(noteId) {
     document.getElementById('community-view').classList.add('hidden');
     document.getElementById('profile-view').classList.add('hidden');
     document.getElementById('creator-hub-view').classList.add('hidden');
-    document.getElementById('zenvio-chat-view').classList.add('hidden');
+    document.getElementById('barop-chat-view').classList.add('hidden');
     
     // Mostrar search
     document.getElementById('search-view').classList.remove('hidden');
@@ -10915,7 +10915,7 @@ async function likeNote(noteId) {
     document.getElementById('search-view').classList.add('hidden');
     document.getElementById('community-view').classList.add('hidden');
     document.getElementById('creator-hub-view').classList.add('hidden');
-    document.getElementById('zenvio-chat-view').classList.add('hidden');
+    document.getElementById('barop-chat-view').classList.add('hidden');
     
     // Mostrar profile
     document.getElementById('profile-view').classList.remove('hidden');
@@ -11077,9 +11077,9 @@ async function likeNote(noteId) {
   }
   const translations = {
     es: {
-      appName: "Zenvio",
+      appName: "Barop",
       tagline: "Tu portal de historias inolvidables",
-      authTitle: "Zenvio",
+      authTitle: "Barop",
       emailPlaceholder: "Correo electrónico",
       passwordPlaceholder: "Contraseña",
       btnIniciarSesion: "Iniciar Sesión",
@@ -11343,7 +11343,7 @@ async function likeNote(noteId) {
     // Handle notifications for both mobile and desktop
     if ('Notification' in window) {
       if (Notification.permission === "granted") {
-        new Notification("Zenvio", {
+        new Notification("Barop", {
           body: message,
           icon: "https://cdn-icons-png.flaticon.com/512/907/907822.png",
           vibrate: [200, 100, 200]
@@ -11353,7 +11353,7 @@ async function likeNote(noteId) {
         try {
           const permission = await Notification.requestPermission();
           if (permission === "granted") {
-            new Notification("Zenvio", {
+            new Notification("Barop", {
               body: message,
               icon: "https://cdn-icons-png.flaticon.com/512/907/907822.png",
               vibrate: [200, 100, 200]
@@ -14746,7 +14746,7 @@ async function likeNote(noteId) {
         ctx.font = "30px sans-serif";
         ctx.fillStyle = "rgba(88,204,2,0.7)";
         ctx.textAlign = "right";
-        ctx.fillText("Zenvio", canvas.width - 10, canvas.height - 10);
+        ctx.fillText("Barop", canvas.width - 10, canvas.height - 10);
         if (promotionText) {
           ctx.font = "24px sans-serif";
           ctx.fillStyle = "rgba(255,255,255,0.8)";
