@@ -19,7 +19,8 @@ const handlers = {
   'upload-image': require('../lib/handlers/upload-image').handler,
   'upload-story': require('../lib/handlers/upload-story').handler,
   'user-stats': require('../lib/handlers/user-stats').handler,
-  'users': require('../lib/handlers/users').handler
+  'users': require('../lib/handlers/users').handler,
+  'realtime-db': require('../lib/handlers/realtime-db').handler
 };
 
 module.exports = async (req, res) => {
