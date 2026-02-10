@@ -2,10 +2,9 @@
 
 ## Problemas Solucionados
 
-1. ✅ Configuración adaptada de Netlify a Vercel
-2. ✅ Base de datos PostgreSQL ahora se conecta y usa correctamente
-3. ✅ APIs funcionan con Vercel Serverless Functions
-4. ✅ Imágenes se almacenan en AWS S3 con URLs firmadas
+1. ✅ Base de datos PostgreSQL ahora se conecta y usa correctamente
+2. ✅ APIs funcionan con Vercel Serverless Functions
+3. ✅ Imágenes se almacenan en AWS S3 con URLs firmadas
 
 ## Configuración en Vercel
 
@@ -54,7 +53,7 @@ vercel
 ## Arquitectura
 
 - **Frontend**: HTML/CSS/JS estáticos servidos por Vercel
-- **Backend**: Vercel Serverless Functions en `/api`
+- **Backend**: Vercel Serverless Function unificada en `api/index.js` (catch-all)
 - **Base de Datos**: PostgreSQL (metadata de usuarios, notas, historias)
 - **Almacenamiento**: AWS S3 (imágenes y archivos)
 
@@ -65,12 +64,3 @@ vercel
 - `GET /api/get-stories` - Obtener historias
 - `POST /api/upload-story` - Crear historia
 - `POST /api/like-note` - Dar like a nota
-
-## Diferencias vs Netlify
-
-| Netlify | Vercel |
-|---------|--------|
-| `exports.handler = async (event)` | `module.exports = async (req, res)` |
-| `event.queryStringParameters` | `req.query` |
-| `event.body` (string) | `req.body` (objeto) |
-| `/.netlify/functions/` | `/api/` |
