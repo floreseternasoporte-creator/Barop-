@@ -2,10 +2,9 @@
 
 ## Problemas Solucionados
 
-1. ✅ Configuración adaptada de Netlify a Vercel
-2. ✅ Base de datos PostgreSQL ahora se conecta y usa correctamente
-3. ✅ APIs funcionan con Vercel Serverless Functions
-4. ✅ Imágenes se almacenan en AWS S3 con URLs firmadas
+1. ✅ Base de datos PostgreSQL ahora se conecta y usa correctamente
+2. ✅ APIs funcionan con Vercel Serverless Functions
+3. ✅ Imágenes se almacenan en AWS S3 con URLs firmadas
 
 ## Configuración en Vercel
 
@@ -34,10 +33,11 @@ Ve a tu proyecto en Vercel > Settings > Environment Variables y agrega:
 
 ```
 DATABASE_URL=postgresql://usuario:password@host:5432/database
-MY_AWS_REGION=us-east-2
-MY_AWS_ACCESS_KEY_ID=tu_access_key_id
-MY_AWS_SECRET_ACCESS_KEY=tu_secret_access_key
-MY_AWS_S3_BUCKET_NAME=libros-de-glam-2025
+AWS_REGION=us-east-2
+AWS_ACCESS_KEY_ID=tu_access_key_id
+AWS_SECRET_ACCESS_KEY=tu_secret_access_key
+AWS_S3_BUCKET=mi-bucket
+# Compatibles también: MY_AWS_REGION, MY_AWS_ACCESS_KEY_ID, MY_AWS_SECRET_ACCESS_KEY, MY_AWS_S3_BUCKET_NAME
 NODE_ENV=production
 ```
 
@@ -54,7 +54,7 @@ vercel
 ## Arquitectura
 
 - **Frontend**: HTML/CSS/JS estáticos servidos por Vercel
-- **Backend**: Vercel Serverless Functions en `/api`
+- **Backend**: Vercel Serverless Function unificada en `api/index.js` (catch-all)
 - **Base de Datos**: PostgreSQL (metadata de usuarios, notas, historias)
 - **Almacenamiento**: AWS S3 (imágenes y archivos)
 
@@ -66,11 +66,10 @@ vercel
 - `POST /api/upload-story` - Crear historia
 - `POST /api/like-note` - Dar like a nota
 
-## Diferencias vs Netlify
 
-| Netlify | Vercel |
-|---------|--------|
-| `exports.handler = async (event)` | `module.exports = async (req, res)` |
-| `event.queryStringParameters` | `req.query` |
-| `event.body` (string) | `req.body` (objeto) |
-| `/.netlify/functions/` | `/api/` |
+## Diagnóstico rápido en producción
+
+- `GET /api/health` → confirma si las variables de entorno críticas están presentes.
+- `GET /api/health-s3` → prueba conectividad real con tu bucket S3 (sin exponer secretos).
+
+Si `health-s3` falla, revisa IAM, bucket policy y región del bucket.
