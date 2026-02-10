@@ -1,35 +1,36 @@
 const { runVercelHandler } = require('../lib/vercel-adapter');
 
-const routes = {
-  'check-user-limits': require('../lib/functions/check-user-limits'),
-  'chapters': require('../lib/functions/chapters'),
-  'community-notes': require('../lib/functions/community-notes'),
-  'delete-story': require('../lib/functions/delete-story'),
-  'following': require('../lib/functions/following'),
-  'get-chapters': require('../lib/functions/get-chapters'),
-  'get-stories': require('../lib/functions/get-stories'),
-  'groq-chat': require('../lib/functions/groq-chat'),
-  'likes': require('../lib/functions/likes'),
-  'migrate-firebase-to-s3': require('../lib/functions/migrate-firebase-to-s3'),
-  'notes': require('../lib/functions/notes'),
-  'notifications': require('../lib/functions/notifications'),
-  'scheduled-chapters': require('../lib/functions/scheduled-chapters'),
-  'send-support-email': require('../lib/functions/send-support-email'),
-  'update-story': require('../lib/functions/update-story'),
-  'upload-image': require('../lib/functions/upload-image'),
-  'upload-story': require('../lib/functions/upload-story'),
-  'user-stats': require('../lib/functions/user-stats'),
-  'users': require('../lib/functions/users')
+const handlers = {
+  'chapters': require('../lib/handlers/chapters').handler,
+  'check-user-limits': require('../lib/handlers/check-user-limits').handler,
+  'community-notes': require('../lib/handlers/community-notes').handler,
+  'delete-story': require('../lib/handlers/delete-story').handler,
+  'following': require('../lib/handlers/following').handler,
+  'get-chapters': require('../lib/handlers/get-chapters').handler,
+  'get-stories': require('../lib/handlers/get-stories').handler,
+  'groq-chat': require('../lib/handlers/groq-chat').handler,
+  'likes': require('../lib/handlers/likes').handler,
+  'migrate-firebase-to-s3': require('../lib/handlers/migrate-firebase-to-s3').handler,
+  'notes': require('../lib/handlers/notes').handler,
+  'notifications': require('../lib/handlers/notifications').handler,
+  'scheduled-chapters': require('../lib/handlers/scheduled-chapters').handler,
+  'send-support-email': require('../lib/handlers/send-support-email').handler,
+  'update-story': require('../lib/handlers/update-story').handler,
+  'upload-image': require('../lib/handlers/upload-image').handler,
+  'upload-story': require('../lib/handlers/upload-story').handler,
+  'user-stats': require('../lib/handlers/user-stats').handler,
+  'users': require('../lib/handlers/users').handler
 };
 
 module.exports = async (req, res) => {
-  const route = req.query?.route;
-  const handlerModule = routes[route];
+  const rawPath = req.query.path || req.query.fn || [];
+  const route = Array.isArray(rawPath) ? rawPath[0] : rawPath;
+  const handler = handlers[route];
 
-  if (!handlerModule?.handler) {
-    res.status(404).json({ error: 'Ruta no encontrada.' });
+  if (!handler) {
+    res.status(404).json({ error: 'Function not found.' });
     return;
   }
 
-  await runVercelHandler(handlerModule.handler, req, res);
+  await runVercelHandler(handler, req, res);
 };
