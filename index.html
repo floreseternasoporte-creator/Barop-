@@ -15,140 +15,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pap6t+K2bD6xIxQqkQ3sM8e+RXw7C3DyrgXV++o2aL/88+/9kS/l+SmpD8zZR1oN40Nq3QfT7HigDYfFW1zZAQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <!-- Sistema de Traducción Automática Mejorado -->
-  <script type="text/javascript">
-    // Detectar idioma del navegador y aplicar traducción inmediatamente
-    (function() {
-      const userLang = (navigator.language || navigator.userLanguage).split('-')[0];
-      console.log('Idioma del navegador detectado:', userLang);
-      
-      // Guardar idioma preferido
-      if (!localStorage.getItem('preferredLanguage')) {
-        localStorage.setItem('preferredLanguage', userLang);
-      }
-      
-      // Mapeo de idiomas soportados
-      const supportedLanguages = {
-        'es': 'es',
-        'en': 'en', 
-        'pt': 'pt',
-        'fr': 'fr',
-        'de': 'de',
-        'it': 'it',
-        'ja': 'ja',
-        'ko': 'ko',
-        'zh': 'zh-CN',
-        'ar': 'ar',
-        'hi': 'hi',
-        'ru': 'ru',
-        'tr': 'tr',
-        'vi': 'vi',
-        'th': 'th',
-        'id': 'id',
-        'pl': 'pl',
-        'nl': 'nl'
-      };
-      
-      const targetLang = supportedLanguages[userLang] || 'en';
-      
-      // Si el idioma no es inglés, preparar para traducir
-      if (targetLang !== 'en') {
-        document.documentElement.setAttribute('data-translate-lang', targetLang);
-      }
-    })();
-    
-    function googleTranslateElementInit() {
-      const preferredLang = localStorage.getItem('preferredLanguage') || 
-                           (navigator.language || navigator.userLanguage).split('-')[0];
-      
-      new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,es,pt,fr,de,it,ja,ko,zh-CN,zh-TW,ar,hi,ru,tr,vi,th,id,pl,nl,sv,no,da,fi,el,he,uk,cs,ro,hu,bg,hr,sk,sl,lt,lv,et',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-        autoDisplay: true,
-        multilanguagePage: true
-      }, 'google_translate_element');
-      
-      // Aplicar traducción automática inmediatamente
-      const applyTranslation = () => {
-        const targetLang = document.documentElement.getAttribute('data-translate-lang');
-        
-        if (targetLang && targetLang !== 'en') {
-          const selectField = document.querySelector('.goog-te-combo');
-          if (selectField) {
-            console.log('Aplicando traducción automática a:', targetLang);
-            selectField.value = targetLang;
-            selectField.dispatchEvent(new Event('change'));
-            
-            // Marcar como traducido
-            setTimeout(() => {
-              document.documentElement.setAttribute('data-translated', 'true');
-            }, 1000);
-          } else {
-            // Reintentar si el selector no está disponible aún
-            setTimeout(applyTranslation, 500);
-          }
-        }
-      };
-      
-      // Intentar aplicar traducción inmediatamente
-      setTimeout(applyTranslation, 100);
-    }
-    
-    // Forzar recarga de traducción cuando se carga la página
-    window.addEventListener('load', function() {
-      const targetLang = document.documentElement.getAttribute('data-translate-lang');
-      if (targetLang && !document.documentElement.getAttribute('data-translated')) {
-        setTimeout(() => {
-          const selectField = document.querySelector('.goog-te-combo');
-          if (selectField && selectField.value !== targetLang) {
-            selectField.value = targetLang;
-            selectField.dispatchEvent(new Event('change'));
-          }
-        }, 2000);
-      }
-    });
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  <style>
-    /* Ocultar banner de Google Translate pero mantener funcionalidad */
-    .goog-te-banner-frame.skiptranslate {
-      display: none !important;
-    }
-    .goog-te-banner-frame {
-      display: none !important;
-    }
-    body {
-      top: 0px !important;
-    }
-    /* Ocultar el widget pero mantener funcionalidad */
-    #google_translate_element {
-      position: fixed;
-      top: -9999px;
-      left: -9999px;
-      visibility: hidden;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .goog-te-gadget {
-      display: none !important;
-    }
-    /* Ocultar el logo de Google Translate */
-    .goog-logo-link {
-      display: none !important;
-    }
-    .goog-te-gadget-simple {
-      display: none !important;
-    }
-    /* Ocultar el iframe de Google Translate */
-    iframe.goog-te-banner-frame {
-      display: none !important;
-    }
-    /* Ocultar elementos de Google */
-    .skiptranslate {
-      display: none !important;
-    }
-  </style>
   <!-- MediaPipe para detección facial real -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
@@ -973,18 +839,6 @@ body {
       });
     }
     window.addEventListener('load', organizeCarousels);
-    document.addEventListener("DOMContentLoaded", function() {
-      const savedLang = localStorage.getItem("selectedLanguage");
-      if (savedLang) {
-        currentLanguage = savedLang;
-        updateTranslations();
-      } else {
-        const languageModal = document.getElementById("language-modal");
-        if (languageModal) {
-          languageModal.style.display = "flex";
-        }
-      }
-    });
 
     function updateChapterUI() {
       const chapterSection = document.getElementById('chapter-section');
@@ -2376,9 +2230,6 @@ setInterval(checkScheduledChapters, 60000);
 
 <body class="bg-white font-sans text-[#393B3D]" style="overflow: hidden;">
   
-  <!-- Google Translate (oculto) -->
-  <div id="google_translate_element" style="display:none !important; visibility:hidden !important; position:absolute; left:-9999px;"></div>
-  
   <div id="auth-form" class="w-full h-screen flex flex-col bg-white" style="display: none; opacity: 0;">
     <!-- Header con nombre de la app -->
     <div class="pt-12 pb-8 text-center">
@@ -2519,7 +2370,7 @@ setInterval(checkScheduledChapters, 60000);
         </div>
       </div>
       
-      <div id="authError" class="mt-4 text-red-500 text-center text-sm hidden"></div>
+      <div id="authErrorEmail" class="mt-4 text-red-500 text-center text-sm hidden"></div>
     </div>
   </div>
   
@@ -2540,7 +2391,7 @@ setInterval(checkScheduledChapters, 60000);
     <div class="flex-1 px-6 pt-8">
       <p id="user-email-display" class="text-sm text-gray-600 mb-6"></p>
       
-      <form id="authForm" class="space-y-4" onsubmit="event.preventDefault(); loginUser();">
+      <form id="authForm" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
         <input
           id="passwordInput"
           type="password"
@@ -2563,7 +2414,7 @@ setInterval(checkScheduledChapters, 60000);
         </button>
       </div>
       
-      <div id="authError" class="mt-4 text-red-500 text-center text-sm hidden"></div>
+      <div id="authErrorPassword" class="mt-4 text-red-500 text-center text-sm hidden"></div>
     </div>
   </div>
   
@@ -11314,7 +11165,7 @@ async function likeNote(noteId) {
   const passwordInput = document.getElementById('passwordInput');
   const submitButton = document.getElementById('submitButton');
   const toggleAuth = document.getElementById('toggleAuth');
-  const authError = document.getElementById('authError');
+  const authError = document.getElementById('authErrorEmail');
   const authFormContainer = document.getElementById('auth-form');
   const mainApp = document.getElementById('main-app');
   let isLogin = true;
@@ -11439,74 +11290,6 @@ async function likeNote(noteId) {
       });
   }
 
-  function updateTranslations() {
-    document.getElementById('app-name').innerText = translations[currentLanguage].appName;
-    document.getElementById('tagline').innerText = translations[currentLanguage].tagline;
-    document.getElementById('auth-title').innerText = translations[currentLanguage].authTitle;
-    emailInput.placeholder = translations[currentLanguage].emailPlaceholder;
-    passwordInput.placeholder = translations[currentLanguage].passwordPlaceholder;
-    submitButton.innerText = translations[currentLanguage].btnIniciarSesion;
-    toggleAuth.innerText = translations[currentLanguage].btnToggleAuth;
-    document.getElementById('btn-volver-search').innerText = translations[currentLanguage].btnVolver;
-    document.getElementById('btn-volver-profile').innerText = translations[currentLanguage].btnVolver;
-    document.getElementById('btn-volver-author').innerText = translations[currentLanguage].btnVolver;
-    document.getElementById('top-stories-title').innerText = translations[currentLanguage].topStories;
-    document.getElementById('new-releases-title').innerText = translations[currentLanguage].newReleases;
-    document.getElementById('top10-title').innerText = translations[currentLanguage].top10;
-    document.getElementById('popular-title').innerText = translations[currentLanguage].popular;
-    document.getElementById('terror-title').innerText = translations[currentLanguage].terror;
-    document.getElementById('search-input').placeholder = translations[currentLanguage].searchPlaceholder;
-    document.getElementById('search-results-title').innerText = translations[currentLanguage].searchResults;
-    document.getElementById('search-books-title').innerText = translations[currentLanguage].searchBooks;
-    document.getElementById('search-authors-title').innerText = translations[currentLanguage].searchAuthors;
-    document.getElementById('profile-stories-title').innerText = translations[currentLanguage].profileStories;
-    document.getElementById('story-type-title').innerText = translations[currentLanguage].createStory;
-    document.getElementById('create-story-title').innerText = translations[currentLanguage].createStory;
-    document.getElementById('story-title').placeholder = translations[currentLanguage].storyTitlePlaceholder;
-    document.getElementById('story-category').options[0].text = translations[currentLanguage].selectCategory;
-    document.getElementById('btn-create-story').innerText = translations[currentLanguage].btnCreateStory;
-    document.getElementById('edit-story-title').innerText = translations[currentLanguage].editStory;
-    document.getElementById('chapter-creation-title').innerText = translations[currentLanguage].chapterCreationTitle;
-    document.getElementById('chapter-content').placeholder = translations[currentLanguage].chapterPlaceholder;
-    document.getElementById('btn-save-chapter').innerText = translations[currentLanguage].btnSaveChapter;
-    document.getElementById('prev-chapter-btn').innerText = translations[currentLanguage].btnPrevChapter;
-    document.getElementById('next-chapter-btn').innerText = translations[currentLanguage].btnNextChapter;
-    document.getElementById('detail-synopsis').innerText = "Sinopsis de la historia...";
-    document.getElementById('detail-metrics').innerHTML =
-      `<span><strong>0</strong> Visitas</span>
-         <span><strong>0</strong> ${translations[currentLanguage].ratings}</span>
-         <span><strong>0</strong> Capítulos</span>`;
-    document.getElementById('report-title').innerText = translations[currentLanguage].reportProfile;
-    document.getElementById('report-instructions').innerText = translations[currentLanguage].reportInstructions;
-    document.getElementById('btn-enviar-report').innerText = translations[currentLanguage].btnSendReport;
-    document.getElementById('lang-modal-title').innerText = translations[currentLanguage].languageModalTitle;
-  }
-
-  function setLanguage(lang) {
-    currentLanguage = lang;
-    localStorage.setItem("selectedLanguage", lang);
-    localStorage.setItem("preferredLanguage", lang);
-    
-    // Aplicar traducción de Google Translate
-    const selectField = document.querySelector('.goog-te-combo');
-    if (selectField && lang !== 'en') {
-      selectField.value = lang;
-      selectField.dispatchEvent(new Event('change'));
-    }
-    
-    const langOverlay = document.getElementById('lang-loading-overlay');
-    if (langOverlay) {
-      langOverlay.style.display = "flex";
-      setTimeout(() => {
-        updateTranslations();
-        langOverlay.style.display = "none";
-        const langModal = document.getElementById('language-modal');
-        if (langModal) {
-          langModal.style.display = "none";
-        }
-      }, 1000);
-    }
-  }
   window.addEventListener('load', () => {
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
@@ -11790,7 +11573,18 @@ async function likeNote(noteId) {
   }
   
   function showPasswordStep() {
-    const email = document.getElementById('emailInput').value;
+    const email = document.getElementById('emailInput').value.trim();
+    const emailError = document.getElementById('authErrorEmail');
+
+    if (!email || !email.includes('@')) {
+      if (emailError) {
+        emailError.textContent = 'Ingresa un correo válido';
+        emailError.classList.remove('hidden');
+      }
+      return;
+    }
+
+    if (emailError) emailError.classList.add('hidden');
     document.getElementById('user-email-display').textContent = email;
     document.getElementById('email-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
@@ -12255,7 +12049,7 @@ async function likeNote(noteId) {
     const email = document.getElementById('emailInput').value;
     const password = document.getElementById('passwordInput').value;
     const submitButton = document.getElementById('submitButton');
-    const authError = document.querySelector('#password-form #authError');
+    const authError = document.getElementById('authErrorPassword');
     
     submitButton.disabled = true;
     submitButton.textContent = 'Iniciando...';
@@ -12292,13 +12086,15 @@ async function likeNote(noteId) {
     }
   }
   
-  toggleAuth.addEventListener('click', () => {
+  if (toggleAuth) {
+    toggleAuth.addEventListener('click', () => {
     isLogin = !isLogin;
     const authTitle = document.getElementById('auth-title');
     submitButton.textContent = isLogin ? 'Continuar' : 'Crear cuenta';
     authTitle.textContent = isLogin ? 'Iniciar sesión' : 'Crear cuenta';
     toggleAuth.textContent = isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión';
   });
+  }
 
   async function syncUserProfileToAWS(user, profileOverrides = {}) {
     if (!user) return;
@@ -12321,85 +12117,58 @@ async function likeNote(noteId) {
     }
   }
 
-  authForm.addEventListener('submit', e => {
-    e.preventDefault();
+  async function handleAuthSubmit() {
+    if (!authError) return;
+
     authError.classList.add('hidden');
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    if (isLogin) {
-      firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          console.log("Usuario autenticado:", userCredential.user);
-        })
-        .catch(error => {
-          console.error(error);
-          authError.textContent = error.message;
-          authError.classList.remove('hidden');
-        });
-    } else {
-      firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          const user = userCredential.user;
-          const userCountRef = firebase.database().ref('userCount');
-          userCountRef.transaction(count => (count || 0) + 1).then(result => {
-            const newCount = result.snapshot.val();
-            const isVerified = newCount <= 100;
-            const userProfile = {
-              username: "Nuevo Usuario",
-              bio: "",
-              profileImage: "",
-              followersCount: 0,
-              followingCount: 0,
-              ratedCount: 0,
-              isVerified: isVerified,
-              registrationTimestamp: Date.now(),
-              founder: false,
-              email: user.email
-            };
-            firebase.database().ref('users/' + user.uid).set(userProfile);
-            syncUserProfileToAWS(user, userProfile);
-          });
-        })
-        .catch(error => {
-          console.error(error);
-          authError.textContent = error.message;
-          authError.classList.remove('hidden');
-        });
+    const email = emailInput?.value?.trim() || '';
+    const password = passwordInput?.value || '';
+
+    if (!email || !password) {
+      authError.textContent = 'Completa correo y contraseña para continuar';
+      authError.classList.remove('hidden');
+      return;
     }
-  });
+
+    if (isLogin) {
+      loginUser();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creando cuenta...';
+
+    try {
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      const userCountRef = firebase.database().ref('userCount');
+      const result = await userCountRef.transaction((count) => (count || 0) + 1);
+      const newCount = result.snapshot.val();
+      const isVerified = newCount <= 100;
+      const userProfile = {
+        username: 'Nuevo Usuario',
+        bio: '',
+        profileImage: '',
+        followersCount: 0,
+        followingCount: 0,
+        ratedCount: 0,
+        isVerified,
+        registrationTimestamp: Date.now(),
+        founder: false,
+        email: user.email
+      };
+
+      await firebase.database().ref('users/' + user.uid).set(userProfile);
+      await syncUserProfileToAWS(user, userProfile);
+    } catch (error) {
+      console.error(error);
+      authError.textContent = error.message || 'No se pudo crear la cuenta';
+      authError.classList.remove('hidden');
+      submitButton.disabled = false;
+      submitButton.textContent = 'Crear cuenta';
+    }
+  }
   firebase.auth().onAuthStateChanged(user => {
-    // Aplicar traducción automática al cargar - MEJORADO
-    const applyUserLanguage = () => {
-      const preferredLang = localStorage.getItem('preferredLanguage') || 
-                           (navigator.language || navigator.userLanguage).split('-')[0];
-      
-      console.log('Aplicando idioma del usuario:', preferredLang);
-      
-      if (preferredLang && preferredLang !== 'en') {
-        const selectField = document.querySelector('.goog-te-combo');
-        if (selectField) {
-          // Mapeo de códigos de idioma
-          const langMap = {
-            'es': 'es', 'pt': 'pt', 'fr': 'fr', 'de': 'de', 
-            'it': 'it', 'ja': 'ja', 'ko': 'ko', 'zh': 'zh-CN',
-            'ar': 'ar', 'hi': 'hi', 'ru': 'ru', 'tr': 'tr'
-          };
-          
-          const targetLang = langMap[preferredLang] || preferredLang;
-          selectField.value = targetLang;
-          selectField.dispatchEvent(new Event('change'));
-          console.log('Idioma aplicado:', targetLang);
-        } else {
-          // Reintentar si no está disponible
-          setTimeout(applyUserLanguage, 500);
-        }
-      }
-    };
-    
-    // Aplicar inmediatamente y también después de un delay
-    setTimeout(applyUserLanguage, 1000);
-    setTimeout(applyUserLanguage, 3000);
-    
     const authFormContainer = document.getElementById('auth-form');
     const mainAppContainer = document.getElementById('main-app');
     
@@ -12892,8 +12661,10 @@ async function likeNote(noteId) {
     mainApp.classList.remove('hidden');
   }
   function performRealTimeSearch() {
-    const query = document.getElementById('search-input').value.trim().toLowerCase();
-    const category = document.getElementById('category-filter').value;
+    const searchInputEl = document.getElementById('search-input');
+    const categoryFilterEl = document.getElementById('category-filter');
+    const query = (searchInputEl?.value || '').trim().toLowerCase();
+    const category = categoryFilterEl?.value || '';
     const recentRangeMs = 7 * 24 * 60 * 60 * 1000;
     const recentThreshold = Date.now() - recentRangeMs;
 
@@ -12903,7 +12674,9 @@ async function likeNote(noteId) {
         stories.forEach((story) => {
           const storyTimestamp = getStoryTimestamp(story);
           const isRecent = storyTimestamp >= recentThreshold;
-          const matchesQuery = story.title && story.title.toLowerCase().includes(query);
+          const storyTitle = (story.title || '').toLowerCase();
+          const storyAuthor = (story.username || story.authorName || '').toLowerCase();
+          const matchesQuery = !query || storyTitle.includes(query) || storyAuthor.includes(query);
           const matchesCategory = !category
             || (category === 'recent' && isRecent)
             || (category === 'system' && (story.category === 'sistema' || story.category === 'system' || story.type === 'sistema' || story.type === 'system'))
@@ -12919,19 +12692,30 @@ async function likeNote(noteId) {
 
     if (query) {
       fetch('/api/users')
-        .then(response => response.json())
+        .then((response) => {
+          if (!response.ok) throw new Error('No se pudieron cargar autores');
+          return response.json();
+        })
         .then(data => {
           const authors = (data.users || []).filter(user =>
-            user.username && user.username.toLowerCase().includes(query)
+            (user.username && user.username.toLowerCase().includes(query))
+            || (user.email && user.email.toLowerCase().includes(query))
           );
           renderAuthorsList(authors);
+        })
+        .catch((error) => {
+          console.error('Error buscando autores:', error);
+          renderAuthorsList([]);
         });
     } else {
       document.getElementById('search-authors-list').innerHTML = '';
     }
   }
 
-document.getElementById('category-filter').addEventListener('change', performRealTimeSearch);
+  const categoryFilter = document.getElementById('category-filter');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', performRealTimeSearch);
+  }
   async function performSearch(query) {
     await new Promise(resolve => setTimeout(resolve, 3000));
     const stories = await loadStoriesFromAWS();
@@ -12950,7 +12734,14 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function renderBooksCarousel(books) {
     const carousel = document.getElementById('search-books-carousel');
+    if (!carousel) return;
     carousel.innerHTML = '';
+
+    if (!books || books.length === 0) {
+      carousel.innerHTML = '<div class="col-span-3 text-center text-gray-500 py-8">No se encontraron historias</div>';
+      return;
+    }
+
     books.forEach(book => {
       const card = document.createElement('div');
       card.className = 'flex-shrink-0 w-48 cursor-pointer';
@@ -12967,16 +12758,26 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function renderAuthorsList(authors) {
     const list = document.getElementById('search-authors-list');
+    if (!list) return;
     list.innerHTML = '';
+
+    if (!authors || authors.length === 0) {
+      list.innerHTML = '<div class="text-center text-gray-500 py-8">No se encontraron autores</div>';
+      return;
+    }
+
     authors.forEach(author => {
       const item = document.createElement('div');
       item.className = 'flex items-center space-x-4 cursor-pointer';
       let verifiedIcon = getVerificationIcon(author.email || "");
+      const authorId = author.userId || author.uid;
       item.innerHTML = `
           <img src="${author.profileImage || 'https://via.placeholder.com/50'}" alt="${author.username}" class="w-12 h-12 rounded-full object-cover">
           <span class="font-semibold">${author.username}${verifiedIcon}</span>
         `;
-      item.addEventListener('click', () => openAuthorProfile(author.uid));
+      item.addEventListener('click', () => {
+        if (authorId) openAuthorProfile(authorId);
+      });
       list.appendChild(item);
     });
   }
@@ -14538,7 +14339,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     return { userRatings, categoryScores };
   }
 
-  function createStoryCard(story) {
+  function createRecommendedStoryCard(story) {
     const card = document.createElement('div');
     card.className = 'cursor-pointer transform transition-transform hover:scale-105';
     card.onclick = () => openStoryDetail(story);
@@ -14725,7 +14526,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       .slice(0, 8);
     
     trending.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
 
@@ -14740,7 +14541,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       .slice(0, 8);
     
     mysteryStories.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
 
@@ -14755,7 +14556,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       .slice(0, 8);
     
     adventureStories.forEach(story => {
-      container.appendChild(createStoryCard(story));
+      container.appendChild(createRecommendedStoryCard(story));
     });
   }
   
@@ -17229,103 +17030,6 @@ function closeZenvioStudio() {
 <!-- (El modal de compra de monedas ha sido removido) -->
 
 <script>
-  const translations = {
-    es: {
-      appName: "Zenvio",
-      tagline: "Tu portal de historias inolvidables",
-      authTitle: "Zenvio",
-      emailPlaceholder: "Correo electrónico",
-      passwordPlaceholder: "Contraseña",
-      btnIniciarSesion: "Iniciar Sesión",
-      btnToggleAuth: "¿No tienes cuenta? Regístrate",
-      btnVolver: "Volver",
-      topStories: "Mejores Historias",
-      newReleases: "Nuevos Lanzamientos",
-      top10: "Top 10",
-      popular: "Más Populares",
-      terror: "Historias de Terror Destacadas",
-      searchPlaceholder: "Buscar historias o autores",
-      searchResults: "Resultados de búsqueda",
-      searchBooks: "Libros",
-      searchAuthors: "Autores",
-      profileStories: "Mis Historias",
-      editProfile: "Editar nombre",
-      saveBio: "Guardar biografía",
-      createStory: "Crear Historia",
-      storyTitlePlaceholder: "Título de la historia",
-      selectCategory: "Selecciona una categoría",
-      btnCreateStory: "Crear Historia",
-      editStory: "Editar Historia",
-      addChapter: "Agregar Capítulo",
-      deleteStory: "Eliminar Historia",
-      makePrivate: "Hacer privada",
-      chapterCreationTitle: "Agregar Nuevo Capítulo",
-      chapterPlaceholder: "Escribe el contenido del capítulo aquí...",
-      btnSaveChapter: "Guardar Capítulo",
-      readChapter: "Capítulo",
-      btnPrevChapter: "Anterior",
-      btnNextChapter: "Siguiente",
-      rateChapter: "Califica:",
-      authorProfile: "Por",
-      reportProfile: "Reportar Perfil",
-      reportInstructions: "Selecciona un motivo o describe el problema:",
-      btnSendReport: "Enviar Reporte",
-      reportSuccess: "Reporte enviado con éxito. En breve recibirás una respuesta.",
-      noInfraccion: "No se detectaron infracciones en este perfil.",
-      followers: "Seguidores",
-      following: "Siguiendo",
-      ratings: "Calificaciones",
-      languageModalTitle: "Selecciona tu idioma",
-      editUsernamePrompt: "Introduce tu nuevo nombre de usuario:",
-      usernameUpdated: "Nombre de usuario actualizado.",
-      bioUpdated: "Biografía actualizada.",
-      chapterAdded: "Capítulo agregado.",
-      noEditingStory: "No hay historia en edición.",
-      userNotAuthenticated: "Usuario no autenticado.",
-      chapterNotFound: "Capítulo no encontrado.",
-      firstChapter: "Este es el primer capítulo.",
-      lastChapter: "Este es el último capítulo.",
-      chapterRated: "Capítulo calificado con {value} estrella(s).",
-      followSelfError: "No puedes seguirte a ti mismo.",
-      nowFollowing: "Ahora sigues a este autor.",
-      stoppedFollowing: "Has dejado de seguir a este autor.",
-      alreadyFollowing: "Ya sigues a este usuario.",
-      storyDeleted: "Historia eliminada.",
-      editLater: "Puedes editar tu historia más tarde desde tu perfil."
-    },
-    en: {
-      appName: "Zenvio",
-      topStories: "Top Stories",
-      editLater: "You can edit your story later from your profile."
-    },
-    pt: {
-      appName: "Zenvio",
-      tagline: "Seu portal para histórias inesquecíveis",
-      topStories: "Melhores Histórias",
-      editLater: "Você pode editar sua história mais tarde em seu perfil."
-    }
-  };
-  // Función que actualiza los textos de la interfaz según currentLanguage
-  function updateTranslations() {
-    // Ejemplo: Actualizamos el título de la aplicación y el tagline
-    document.getElementById('app-name').innerText = translations[currentLanguage].appName;
-    document.getElementById('tagline').innerText = translations[currentLanguage].tagline;
-    // ... (continúa actualizando todos los elementos que dependan de traducciones)
-  }
-  // Función para establecer el idioma y guardar la selección
-  function setLanguage(lang) {
-    currentLanguage = lang;
-    localStorage.setItem("selectedLanguage", lang);
-    const langOverlay = document.getElementById('lang-loading-overlay');
-    if (langOverlay) langOverlay.style.display = "flex";
-    setTimeout(() => {
-      updateTranslations();
-      if (langOverlay) langOverlay.style.display = "none";
-      const langModal = document.getElementById('language-modal');
-      if (langModal) langModal.style.display = "none";
-    }, 1000);
-  }
-
   function blockAuthor() {
     const currentUser = firebase.auth().currentUser;
     if (!currentUser || !currentViewedAuthorId) return;
