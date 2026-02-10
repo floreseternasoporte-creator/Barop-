@@ -2,7 +2,7 @@
 
 async function fetchUserProfile(user) {
   try {
-    const response = await fetch(`/.netlify/functions/users?userId=${user.uid}`);
+    const response = await fetch(`/api/users?userId=${user.uid}`);
     if (response.ok) {
       const data = await response.json();
       return data.user || null;
@@ -27,7 +27,7 @@ async function uploadCommunityImage(file, userId) {
     reader.readAsDataURL(file);
   });
 
-  const response = await fetch('/.netlify/functions/upload-image', {
+  const response = await fetch('/api/upload-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -84,7 +84,7 @@ async function publishNote() {
       imageUrl
     };
 
-    const response = await fetch('/.netlify/functions/community-notes', {
+    const response = await fetch('/api/community-notes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(noteData)
@@ -115,7 +115,7 @@ async function loadNotes() {
   feedContainer.innerHTML = '<div class="p-4 text-center text-gray-500">Cargando...</div>';
 
   try {
-    const response = await fetch('/.netlify/functions/community-notes?limit=50');
+    const response = await fetch('/api/community-notes?limit=50');
     if (!response.ok) {
       throw new Error('No se pudieron cargar las notas');
     }
@@ -167,7 +167,7 @@ async function likeNote(noteId) {
     return;
   }
   
-  const response = await fetch('/.netlify/functions/community-notes', {
+  const response = await fetch('/api/community-notes', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ action: 'like', noteId })

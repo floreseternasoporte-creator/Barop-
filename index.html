@@ -1024,7 +1024,7 @@ async function saveScheduledChapter(chapterId, publishDate) {
     return;
   }
   try {
-    await fetch('/.netlify/functions/scheduled-chapters', {
+    await fetch('/api/scheduled-chapters', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1041,7 +1041,7 @@ async function saveScheduledChapter(chapterId, publishDate) {
 
 async function checkScheduledChapters() {
   try {
-    const response = await fetch('/.netlify/functions/scheduled-chapters');
+    const response = await fetch('/api/scheduled-chapters');
     if (!response.ok) return;
     const data = await response.json();
     const chapters = data.chapters || [];
@@ -1055,7 +1055,7 @@ async function checkScheduledChapters() {
             new Date(scheduled.publishDate).getTime() <= now
         )
         .map((scheduled) =>
-          fetch('/.netlify/functions/scheduled-chapters', {
+          fetch('/api/scheduled-chapters', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1806,57 +1806,153 @@ setInterval(checkScheduledChapters, 60000);
     </div>
     
     <!-- Lista de opciones scrolleable -->
-    <div class="flex-1 overflow-y-auto">
-      <div class="space-y-4 p-4">
+    <div class="flex-1 overflow-y-auto bg-[#F6F7F8]">
+      <div class="space-y-6 p-4">
+        <!-- Cuenta -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">Cuenta</h3>
+          <div class="bg-white rounded-2xl border border-black/5 divide-y divide-gray-100">
+            <button onclick="openSettingsPlaceholder('Editar perfil');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Editar perfil</p>
+                <p class="text-sm text-gray-500">Nombre, bio y foto</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
+            <button onclick="openSettingsPlaceholder('Privacidad y seguridad');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.866-3.582 7-8 7a9 9 0 008-7z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.866 3.582 7 8 7a9 9 0 01-8-7z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V6a3 3 0 116 0v1" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V5a3 3 0 10-6 0v2" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Privacidad y seguridad</p>
+                <p class="text-sm text-gray-500">Cuenta privada y bloqueos</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
+            <button onclick="openVerificationModal(); closeMenuModal();" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-blue-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-blue-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Consigue tu verificación</p>
+                <p class="text-sm text-gray-500">Distintivo oficial para tu perfil</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Preferencias -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">Preferencias</h3>
+          <div class="bg-white rounded-2xl border border-black/5 divide-y divide-gray-100">
+            <button onclick="openSettingsPlaceholder('Notificaciones');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Notificaciones</p>
+                <p class="text-sm text-gray-500">Push, correo y menciones</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
+            <button onclick="openSettingsPlaceholder('Apariencia');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12a8 8 0 11-16 0 8 8 0 0116 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Apariencia</p>
+                <p class="text-sm text-gray-500">Modo oscuro y tamaño de texto</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
+            <button onclick="openSettingsPlaceholder('Idioma');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m0 4v8m0 0H5m4 0h4m7 0l-5-5m5 5l-5 5" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Idioma</p>
+                <p class="text-sm text-gray-500">Español (Latam)</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
+          </div>
+        </div>
 
         <!-- Soporte -->
-        <button onclick="openSupportModal(); closeMenuModal();" class="w-full bg-white border border-gray-200 p-4 rounded-xl hover:bg-gray-50 transition-colors flex items-center">
-          <div class="w-12 h-12 bg-[#00A2FF] bg-opacity-10 rounded-full flex items-center justify-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-[#00A2FF]" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
-            </svg>
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">Soporte</h3>
+          <div class="bg-white rounded-2xl border border-black/5 divide-y divide-gray-100">
+            <button onclick="openSupportModal(); closeMenuModal();" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-[#00A2FF] bg-opacity-10 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#00A2FF]" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Centro de soporte</p>
+                <p class="text-sm text-gray-500">Ayuda, reportes y estado</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+            <button onclick="openSettingsPlaceholder('Centro de seguridad');" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-black/5 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.866-3.582 7-8 7a9 9 0 008-7z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.866 3.582 7 8 7a9 9 0 01-8-7z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V6a3 3 0 116 0v1" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11V5a3 3 0 10-6 0v2" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-gray-900">Centro de seguridad</p>
+                <p class="text-sm text-gray-500">Revisa inicios y permisos</p>
+              </div>
+              <span class="ml-auto text-xs font-medium text-gray-400">Próximo</span>
+            </button>
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-gray-900">Centro de Soporte</h3>
-            <p class="text-sm text-gray-500">Obtén ayuda y reporta problemas</p>
-          </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
+        </div>
 
-        <!-- Consigue Verificarte -->
-        <button onclick="openVerificationModal(); closeMenuModal();" class="w-full bg-white border border-blue-200 p-4 rounded-xl hover:bg-blue-50 transition-colors flex items-center">
-          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+        <!-- Sesión -->
+        <div class="space-y-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">Sesión</h3>
+          <div class="bg-white rounded-2xl border border-black/5">
+            <button onclick="signOutUser(); closeMenuModal();" class="w-full flex items-center gap-4 px-4 py-4 hover:bg-red-50 transition-colors">
+              <div class="h-11 w-11 rounded-full bg-red-100 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-red-600">Cerrar sesión</p>
+                <p class="text-sm text-red-500">Salir de tu cuenta</p>
+              </div>
+            </button>
           </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-blue-600">Consigue Verificarte</h3>
-            <p class="text-sm text-blue-500">Obtén tu insignia de verificación</p>
-          </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-
-        <!-- Cerrar Sesión -->
-        <button onclick="signOutUser(); closeMenuModal();" class="w-full bg-white border border-red-200 p-4 rounded-xl hover:bg-red-50 transition-colors flex items-center">
-          <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-          </div>
-          <div class="text-left">
-            <h3 class="font-semibold text-red-600">Cerrar Sesión</h3>
-            <p class="text-sm text-red-500">Salir de tu cuenta</p>
-          </div>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-        
+        </div>
       </div>
     </div>
   </div>
@@ -3408,7 +3504,7 @@ async function generateStory() {
   try {
     const prompt = `Escribe una historia ${length} de género ${genre} sobre: ${theme}. Hazla emocionante y bien estructurada con inicio, desarrollo y final.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3473,7 +3569,7 @@ async function generateCharacter() {
   try {
     const prompt = `Crea un perfil detallado de personaje tipo ${type} con estas características: ${traits || 'sorpréndeme'}. Incluye: nombre, edad, apariencia, personalidad, habilidades, debilidades, historia de fondo y motivaciones.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3543,7 +3639,7 @@ async function generatePlotTwist() {
       ? `Basado en esta historia: "${context}", sugiere un giro de trama sorprendente e inesperado que cambie todo.`
       : 'Sugiere un giro de trama original y sorprendente para una historia.';
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3608,7 +3704,7 @@ async function generateWorld() {
   try {
     const prompt = `Crea un mundo ficticio detallado de tipo ${type} con estos elementos: ${elements || 'sorpréndeme'}. Incluye: nombre del mundo, geografía, clima, sistema político, cultura, tecnología/magia, especies/razas, y conflictos principales.`;
     
-    const response = await fetch('/.netlify/functions/groq-chat', {
+    const response = await fetch('/api/groq-chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -3785,8 +3881,8 @@ function sendChatMessage() {
 	  const messagesContainer = document.getElementById('chat-messages-container');
 	  
 	  try {
-	    // Usar Groq vía Netlify Function (evita exponer la API key en el navegador)
-	    const response = await fetch('/.netlify/functions/groq-chat', {
+	    // Usar Groq vía Vercel Function (evita exponer la API key en el navegador)
+	    const response = await fetch('/api/groq-chat', {
 	      method: 'POST',
 	      headers: {
 	        'Content-Type': 'application/json'
@@ -6901,7 +6997,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (profileImageDesktop) profileImageDesktop.src = base64String;
 
         // Subir a S3
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -7050,7 +7146,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const isFollowing = text.textContent === 'Dejar de seguir';
     
     try {
-      const response = await fetch('/.netlify/functions/following', {
+      const response = await fetch('/api/following', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -9074,6 +9170,11 @@ function closeMenuModal() {
   document.getElementById('menu-modal').classList.add('hidden');
 }
 
+function openSettingsPlaceholder(sectionName) {
+  closeMenuModal();
+  alert(`${sectionName} estará disponible pronto.`);
+}
+
 // Funciones para manejar los ajustes de transmisión
 function openSettingsFullscreen() {
   document.getElementById('live-settings-modal').classList.remove('hidden');
@@ -9430,7 +9531,7 @@ function showLiveNotification(message, type = 'info') {
 	  photosGrid.innerHTML = '<div class="col-span-2 text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i><p class="mt-2 text-gray-500">Cargando fotos...</p></div>';
 
   try {
-    const response = await fetch('/.netlify/functions/notes?limit=50');
+    const response = await fetch('/api/notes?limit=50');
     const result = await response.json();
     
     if (!response.ok) {
@@ -10033,7 +10134,7 @@ function showLiveNotification(message, type = 'info') {
   // Función para cargar estadísticas del perfil desde AWS S3
   async function loadUserStats(userId) {
     try {
-      const response = await fetch(`/.netlify/functions/user-stats?userId=${userId}`);
+      const response = await fetch(`/api/user-stats?userId=${userId}`);
       const result = await response.json();
       
       if (!response.ok) {
@@ -10092,7 +10193,7 @@ function showLiveNotification(message, type = 'info') {
   // Nueva función para cargar historias desde S3
   async function loadUserStoriesFromS3(userId) {
     try {
-      const response = await fetch(`/.netlify/functions/get-stories?userId=${userId}`);
+      const response = await fetch(`/api/get-stories?userId=${userId}`);
       const result = await response.json();
       
       if (!response.ok) {
@@ -10373,14 +10474,14 @@ function openCreatorHub() {
 
     try {
       // Cargar estadísticas de historias desde AWS S3
-      const storiesResponse = await fetch(`/.netlify/functions/user-stats?userId=${user.uid}&type=stories`);
+      const storiesResponse = await fetch(`/api/user-stats?userId=${user.uid}&type=stories`);
       if (storiesResponse.ok) {
         const storiesData = await storiesResponse.json();
         const storiesCount = storiesData.count || 0;
         if (storiesCountEl) storiesCountEl.textContent = storiesCount;
       } else {
         // Fallback: contar historias manualmente
-        const allStoriesResponse = await fetch('/.netlify/functions/get-stories');
+        const allStoriesResponse = await fetch('/api/get-stories');
         if (allStoriesResponse.ok) {
           const allStoriesData = await allStoriesResponse.json();
           const userStories = allStoriesData.stories ? allStoriesData.stories.filter(story => story.userId === user.uid) : [];
@@ -10391,7 +10492,7 @@ function openCreatorHub() {
       }
 
       // Cargar estadísticas de notas desde AWS S3
-      const notesResponse = await fetch(`/.netlify/functions/notes?userId=${user.uid}`);
+      const notesResponse = await fetch(`/api/notes?userId=${user.uid}`);
       if (notesResponse.ok) {
         const notesData = await notesResponse.json();
         const notesCount = notesData.notes ? notesData.notes.length : 0;
@@ -10514,7 +10615,7 @@ function openCreatorHub() {
 
     try {
       // Primero verificar límites
-      const limitsCheck = await fetch('/.netlify/functions/check-user-limits', {
+      const limitsCheck = await fetch('/api/check-user-limits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -10557,7 +10658,7 @@ function openCreatorHub() {
       }
 
       // Subir nota a AWS S3
-      const response = await fetch('/.netlify/functions/notes', {
+      const response = await fetch('/api/notes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -10627,7 +10728,7 @@ function openCreatorHub() {
     feedContainer.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-2xl text-[#00A2FF]"></i></div>';
     
     try {
-      const response = await fetch('/.netlify/functions/notes?limit=50');
+      const response = await fetch('/api/notes?limit=50');
       const result = await response.json();
       
       if (!response.ok) {
@@ -10776,7 +10877,7 @@ function moderarNota(noteId, content) {
 	      return;
 	    }
 	  
-	    const response = await fetch('/.netlify/functions/notes', {
+	    const response = await fetch('/api/notes', {
 	      method: 'POST',
 	      headers: {
 	        'Content-Type': 'application/json',
@@ -10807,7 +10908,7 @@ async function likeNote(noteId) {
     if (!user) return;
 
     try {
-      const response = await fetch('/.netlify/functions/likes', {
+      const response = await fetch('/api/likes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -11507,7 +11608,7 @@ async function likeNote(noteId) {
       const markAsRead = async () => {
         if (!notification.read && notificationsUserId) {
           try {
-            await fetch('/.netlify/functions/notifications', {
+            await fetch('/api/notifications', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -11536,7 +11637,7 @@ async function likeNote(noteId) {
 
   async function addNotification(userId, message, type = 'info') {
     try {
-      const response = await fetch('/.netlify/functions/notifications', {
+      const response = await fetch('/api/notifications', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -11634,7 +11735,7 @@ async function likeNote(noteId) {
         document.getElementById('notifications-modal').classList.remove('hidden');
         
         // Cargar notificaciones desde AWS S3
-        const response = await fetch(`/.netlify/functions/notifications?userId=${currentUser.uid}`);
+        const response = await fetch(`/api/notifications?userId=${currentUser.uid}`);
         const result = await response.json();
         
         if (!response.ok) {
@@ -12210,7 +12311,7 @@ async function likeNote(noteId) {
     };
 
     try {
-      await fetch('/.netlify/functions/users', {
+      await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -12470,7 +12571,7 @@ async function likeNote(noteId) {
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Enviando...';
     
     try {
-      const response = await fetch('/.netlify/functions/send-support-email', {
+      const response = await fetch('/api/send-support-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -12519,7 +12620,7 @@ async function likeNote(noteId) {
     if (user) {
       const nextViews = (story.views || 0) + 1;
       story.views = nextViews;
-      fetch('/.netlify/functions/update-story', {
+      fetch('/api/update-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: story.id, updates: { views: nextViews } })
@@ -12536,7 +12637,7 @@ async function likeNote(noteId) {
     document.getElementById('detail-synopsis').textContent = story.synopsis || "Sinopsis no disponible.";
     
     // Cargar capítulos (AWS)
-    fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`)
+    fetch(`/api/get-chapters?storyId=${story.id}`)
       .then(response => response.json())
       .then(data => {
         const chaptersList = document.getElementById('detail-chapters');
@@ -12616,7 +12717,7 @@ async function likeNote(noteId) {
   function openStoryEdit(story) {
     currentEditingStory = story;
     document.getElementById('edit-story-language').value = story.language || "";
-    fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`)
+    fetch(`/api/get-chapters?storyId=${story.id}`)
       .then(response => response.json())
       .then(data => {
         currentChapters = [];
@@ -12667,7 +12768,7 @@ async function likeNote(noteId) {
     const isPrivate = currentEditingStory.isPrivate || false;
     const newPrivacy = !isPrivate;
     
-    fetch('/.netlify/functions/update-story', {
+    fetch('/api/update-story', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ storyId: currentEditingStory.id, updates: { isPrivate: newPrivacy } })
@@ -12690,7 +12791,7 @@ async function likeNote(noteId) {
     }
     
     if (confirm('¿Estás seguro de que quieres eliminar esta historia? Esta acción no se puede deshacer.')) {
-      fetch('/.netlify/functions/delete-story', {
+      fetch('/api/delete-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: currentEditingStory.id })
@@ -12728,7 +12829,7 @@ async function likeNote(noteId) {
       const reader = new FileReader();
       reader.onload = async function(e) {
         try {
-          const response = await fetch('/.netlify/functions/upload-image', {
+          const response = await fetch('/api/upload-image', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -12749,7 +12850,7 @@ async function likeNote(noteId) {
         }
         
         // Guardar todos los cambios
-        fetch('/.netlify/functions/update-story', {
+        fetch('/api/update-story', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ storyId: currentEditingStory.id, updates })
@@ -12767,7 +12868,7 @@ async function likeNote(noteId) {
       reader.readAsDataURL(file);
     } else {
       // Guardar sin cambiar portada
-      fetch('/.netlify/functions/update-story', {
+      fetch('/api/update-story', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: currentEditingStory.id, updates })
@@ -12817,7 +12918,7 @@ async function likeNote(noteId) {
       .catch((error) => console.error('Error buscando historias:', error));
 
     if (query) {
-      fetch('/.netlify/functions/users')
+      fetch('/api/users')
         .then(response => response.json())
         .then(data => {
           const authors = (data.users || []).filter(user =>
@@ -12839,7 +12940,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       if (story.title && story.title.toLowerCase().includes(query)) books.push(story);
     });
     renderBooksCarousel(books);
-    const usersResponse = await fetch('/.netlify/functions/users');
+    const usersResponse = await fetch('/api/users');
     const usersData = await usersResponse.json();
     const authors = (usersData.users || []).filter(user =>
       user.username && user.username.toLowerCase().includes(query)
@@ -12896,7 +12997,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         const base64String = e.target.result;
         const timestamp = Date.now();
 
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -13954,7 +14055,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     }
 
     if (currentChapterEditId) {
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -13983,7 +14084,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       const chapterId = `chapter_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
       newChapter.id = chapterId;
 
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -14021,7 +14122,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function deleteChapter(chapterId) {
     if (confirm("¿Estás seguro de eliminar este capítulo?")) {
-      fetch('/.netlify/functions/chapters', {
+      fetch('/api/chapters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -14055,7 +14156,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
       mainApp.classList.add('hidden');
     }
     
-    fetch(`/.netlify/functions/chapters?storyId=${storyId}&chapterId=${chapterId}`)
+    fetch(`/api/chapters?storyId=${storyId}&chapterId=${chapterId}`)
       .then(response => response.json())
       .then(data => {
       const chapter = data.chapter;
@@ -14077,7 +14178,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         
         const user = firebase.auth().currentUser;
         if (user) {
-          fetch('/.netlify/functions/chapters', {
+          fetch('/api/chapters', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -14153,7 +14254,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     });
     const user = firebase.auth().currentUser;
     if (!user) return;
-    fetch(`/.netlify/functions/chapters?storyId=${storyId}&chapterId=${chapterId}`)
+    fetch(`/api/chapters?storyId=${storyId}&chapterId=${chapterId}`)
       .then(response => response.json())
       .then(data => {
         const rating = data.chapter?.ratings?.[user.uid];
@@ -14168,7 +14269,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     stars.forEach(star => {
       star.onclick = function() {
         const value = parseInt(this.getAttribute('data-value'));
-        fetch('/.netlify/functions/chapters', {
+        fetch('/api/chapters', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -14223,7 +14324,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   window.addEventListener('online', removeSkeletonEffect);
   /*********************** CARGA DE HISTORIAS **************************/
   function loadStories() {
-    fetch('/.netlify/functions/get-stories')
+    fetch('/api/get-stories')
       .then(response => response.json())
       .then(data => {
         let stories = data.stories || [];
@@ -14269,7 +14370,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   }
   /*********************** CARGA DE HISTORIAS DEL USUARIO **************************/
   function loadUserStories(userId) {
-    fetch(`/.netlify/functions/get-stories?userId=${userId}`)
+    fetch(`/api/get-stories?userId=${userId}`)
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById('user-stories');
@@ -14324,7 +14425,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
   async function loadStoriesFromAWS() {
     let awsStories = [];
     try {
-      const response = await fetch('/.netlify/functions/get-stories');
+      const response = await fetch('/api/get-stories');
       if (!response.ok) {
         throw new Error(`AWS fetch failed with status ${response.status}`);
       }
@@ -14400,7 +14501,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
     
     for (const story of allStories.slice(0, 30)) {
       try {
-        const chaptersResponse = await fetch(`/.netlify/functions/get-chapters?storyId=${story.id}`);
+        const chaptersResponse = await fetch(`/api/get-chapters?storyId=${story.id}`);
         const chaptersData = await chaptersResponse.json();
         
         if (chaptersData.chapters) {
@@ -16217,7 +16318,7 @@ document.getElementById('category-filter').addEventListener('change', performRea
         const base64String = e.target.result;
         const timestamp = Date.now();
 
-        const response = await fetch('/.netlify/functions/upload-image', {
+        const response = await fetch('/api/upload-image', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -17356,7 +17457,7 @@ async function autoMigrateFirebaseData() {
     console.log('Starting automatic Firebase to S3 migration...');
     showLoader();
     
-    const response = await fetch('/.netlify/functions/migrate-firebase-to-s3', {
+    const response = await fetch('/api/migrate-firebase-to-s3', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
