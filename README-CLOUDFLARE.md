@@ -1,24 +1,24 @@
-# BeaBoo Platform - Despliegue en Vercel
+# BeaBoo Platform - Despliegue en Cloudflare
 
 ## Problemas Solucionados
 
 1. ✅ Base de datos PostgreSQL ahora se conecta y usa correctamente
-2. ✅ APIs funcionan con Vercel Serverless Functions
+2. ✅ APIs funcionan con Cloudflare Pages Functions
 3. ✅ Imágenes se almacenan en AWS S3 con URLs firmadas
 
-## Configuración en Vercel
+## Configuración en Cloudflare
 
 ### 1. Crear Base de Datos PostgreSQL
 
-Opción A - **Vercel Postgres** (Recomendado):
+Opción A - **Cloudflare D1** (si migras a SQLite distribuido):
 ```bash
-# En tu proyecto de Vercel, ve a Storage > Create Database > Postgres
-# Copia el DATABASE_URL que te proporciona
+# Crea una DB D1 desde Cloudflare Dashboard > Workers & Pages > D1
+# Si mantienes PostgreSQL, conserva DATABASE_URL como hasta ahora
 ```
 
-Opción B - **AWS RDS PostgreSQL**:
-- Crea una instancia RDS PostgreSQL en AWS
-- Usa el connection string en DATABASE_URL
+Opción B - **PostgreSQL gestionado (Neon, Supabase, RDS, etc.)**:
+- Crea la instancia PostgreSQL
+- Usa el connection string en `DATABASE_URL`
 
 ### 2. Ejecutar Schema SQL
 
@@ -27,9 +27,9 @@ Conecta a tu base de datos y ejecuta:
 psql $DATABASE_URL -f schema.sql
 ```
 
-### 3. Variables de Entorno en Vercel
+### 3. Variables de Entorno en Cloudflare
 
-Ve a tu proyecto en Vercel > Settings > Environment Variables y agrega:
+En Cloudflare Dashboard > Workers & Pages > tu proyecto > Settings > Variables y Secrets, agrega:
 
 ```
 DATABASE_URL=postgresql://usuario:password@host:5432/database
@@ -44,17 +44,20 @@ NODE_ENV=production
 ### 4. Desplegar
 
 ```bash
-# Instalar Vercel CLI
-npm i -g vercel
+# Instalar Wrangler CLI
+npm i -g wrangler
 
-# Desplegar
-vercel
+# Login
+wrangler login
+
+# Deploy en Cloudflare Pages (sitio estático + functions)
+wrangler pages deploy .
 ```
 
 ## Arquitectura
 
-- **Frontend**: HTML/CSS/JS estáticos servidos por Vercel
-- **Backend**: Vercel Serverless Function unificada en `api/index.js` (catch-all)
+- **Frontend**: HTML/CSS/JS estáticos servidos por Cloudflare Pages
+- **Backend**: Cloudflare Pages Function catch-all en `functions/api/[[path]].js` que enruta a `api/index.js`
 - **Base de Datos**: PostgreSQL (metadata de usuarios, notas, historias)
 - **Almacenamiento**: AWS S3 (imágenes y archivos)
 
@@ -65,7 +68,6 @@ vercel
 - `GET /api/get-stories` - Obtener historias
 - `POST /api/upload-story` - Crear historia
 - `POST /api/like-note` - Dar like a nota
-
 
 ## Diagnóstico rápido en producción
 

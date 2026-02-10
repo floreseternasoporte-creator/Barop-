@@ -1,10 +1,10 @@
-# Configuración de Vercel Functions
+# Configuración de Cloudflare Workers
 
 ## Arquitectura
 - **Firebase**: Solo autenticación (Auth). Realtime usa bridge en AWS vía /api/realtime-db
 - **AWS S3**: TODO (datos + imágenes)
 - **AWS SES**: Emails
-- **Vercel Functions**: Serverless
+- **Cloudflare Workers**: Serverless
 
 ## Estructura en S3
 
@@ -66,4 +66,4 @@ npm install
 ## Estado real de migración
 
 - Ver auditoría técnica en `AUDITORIA_INFRAESTRUCTURA.md` para el detalle de dependencias activas.
-- Estado actual: Firebase solo para auth; datos/tiempo real en AWS mediante APIs Vercel.
+- Estado actual: Firebase solo para auth; datos/tiempo real en AWS mediante APIs Cloudflare.
