@@ -1,49 +1,100 @@
+const AWS = require('aws-sdk');
 const { runVercelHandler } = require('../lib/vercel-adapter');
 
-const handlers = {
-  'chapters': require('../lib/handlers/chapters').handler,
-  'check-user-limits': require('../lib/handlers/check-user-limits').handler,
-  'community-notes': require('../lib/handlers/community-notes').handler,
-  'delete-story': require('../lib/handlers/delete-story').handler,
-  'following': require('../lib/handlers/following').handler,
-  'get-chapters': require('../lib/handlers/get-chapters').handler,
-  'get-stories': require('../lib/handlers/get-stories').handler,
-  'groq-chat': require('../lib/handlers/groq-chat').handler,
-  'likes': require('../lib/handlers/likes').handler,
-  'migrate-firebase-to-s3': require('../lib/handlers/migrate-firebase-to-s3').handler,
-  'notes': require('../lib/handlers/notes').handler,
-  'notifications': require('../lib/handlers/notifications').handler,
-  'scheduled-chapters': require('../lib/handlers/scheduled-chapters').handler,
-  'send-support-email': require('../lib/handlers/send-support-email').handler,
-  'update-story': require('../lib/handlers/update-story').handler,
-  'upload-image': require('../lib/handlers/upload-image').handler,
-  'upload-story': require('../lib/handlers/upload-story').handler,
-  'user-stats': require('../lib/handlers/user-stats').handler,
-  'users': require('../lib/handlers/users').handler
+const handlerModules = {
+  'chapters': '../lib/handlers/chapters',
+  'check-user-limits': '../lib/handlers/check-user-limits',
+  'community-notes': '../lib/handlers/community-notes',
+  'delete-story': '../lib/handlers/delete-story',
+  'following': '../lib/handlers/following',
+  'get-chapters': '../lib/handlers/get-chapters',
+  'get-stories': '../lib/handlers/get-stories',
+  'groq-chat': '../lib/handlers/groq-chat',
+  'likes': '../lib/handlers/likes',
+  'migrate-firebase-to-s3': '../lib/handlers/migrate-firebase-to-s3',
+  'notes': '../lib/handlers/notes',
+  'notifications': '../lib/handlers/notifications',
+  'scheduled-chapters': '../lib/handlers/scheduled-chapters',
+  'send-support-email': '../lib/handlers/send-support-email',
+  'update-story': '../lib/handlers/update-story',
+  'upload-image': '../lib/handlers/upload-image',
+  'upload-story': '../lib/handlers/upload-story',
+  'user-stats': '../lib/handlers/user-stats',
+  'users': '../lib/handlers/users'
 };
 
+const getRoute = (query) => {
+  const rawPath = query?.path || query?.fn || [];
+  return Array.isArray(rawPath) ? rawPath[0] : rawPath;
+};
+
+const getAwsConfigFlags = () => ({
+  awsRegionConfigured: Boolean(process.env.AWS_REGION || process.env.MY_AWS_REGION || process.env.ZENVIO_AWS_REGION),
+  awsBucketConfigured: Boolean(process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET),
+  awsKeyConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID || process.env.ZENVIO_AWS_ACCESS_KEY),
+  awsSecretConfigured: Boolean(process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.ZENVIO_AWS_SECRET_KEY)
+});
+
+const resolveBucket = () => process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET;
+
 module.exports = async (req, res) => {
-  const rawPath = req.query.path || req.query.fn || [];
-  const route = Array.isArray(rawPath) ? rawPath[0] : rawPath;
+  const route = getRoute(req.query);
 
   if (route === 'health') {
     res.status(200).json({
       ok: true,
       runtime: 'vercel-node',
-      awsRegionConfigured: Boolean(process.env.AWS_REGION || process.env.MY_AWS_REGION || process.env.ZENVIO_AWS_REGION),
-      awsBucketConfigured: Boolean(process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET),
-      awsKeyConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID || process.env.ZENVIO_AWS_ACCESS_KEY),
-      awsSecretConfigured: Boolean(process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.ZENVIO_AWS_SECRET_KEY)
+      ...getAwsConfigFlags()
     });
     return;
   }
 
-  const handler = handlers[route];
+  if (route === 'health-s3') {
+    try {
+      const bucket = resolveBucket();
+      const s3 = new AWS.S3({
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION || 'us-east-2'
+      });
 
-  if (!handler) {
+      await s3.headBucket({ Bucket: bucket }).promise();
+
+      res.status(200).json({ ok: true, bucketConfigured: Boolean(bucket), bucketReachable: true });
+      return;
+    } catch (error) {
+      res.status(500).json({
+        ok: false,
+        bucketConfigured: Boolean(resolveBucket()),
+        bucketReachable: false,
+        errorCode: error.code || 'UNKNOWN',
+        errorMessage: error.message || 'S3 check failed'
+      });
+      return;
+    }
+  }
+
+  const modulePath = handlerModules[route];
+
+  if (!modulePath) {
     res.status(404).json({ error: 'Function not found.' });
     return;
   }
 
-  await runVercelHandler(handler, req, res);
+  try {
+    const loaded = require(modulePath);
+    const handler = loaded?.handler;
+
+    if (typeof handler !== 'function') {
+      res.status(500).json({ error: `Handler "${route}" is invalid.` });
+      return;
+    }
+
+    await runVercelHandler(handler, req, res);
+  } catch (error) {
+    res.status(500).json({
+      error: `Failed to load handler "${route}".`,
+      details: error.message
+    });
+  }
 };

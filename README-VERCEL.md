@@ -65,3 +65,11 @@ vercel
 - `GET /api/get-stories` - Obtener historias
 - `POST /api/upload-story` - Crear historia
 - `POST /api/like-note` - Dar like a nota
+
+
+## Diagnóstico rápido en producción
+
+- `GET /api/health` → confirma si las variables de entorno críticas están presentes.
+- `GET /api/health-s3` → prueba conectividad real con tu bucket S3 (sin exponer secretos).
+
+Si `health-s3` falla, revisa IAM, bucket policy y región del bucket.
