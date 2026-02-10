@@ -17,7 +17,7 @@ exports.handler = async (event) => {
         statusCode: 500,
         body: JSON.stringify({
           error:
-            'Missing Groq credentials: set GROQ_API_KEY (recommended) in Vercel environment variables.'
+            'Missing Groq credentials: set GROQ_API_KEY (recommended) in Cloudflare environment variables.'
         })
       };
     }
@@ -88,6 +88,6 @@ exports.handler = async (event) => {
     };
   }
 };
-const { runVercelHandler } = require('../vercel-adapter');
+const { runCloudflareHandler } = require('../cloudflare-adapter');
 
-module.exports = async (req, res) => runVercelHandler(exports.handler, req, res);
+module.exports = async (req, res) => runCloudflareHandler(exports.handler, req, res);

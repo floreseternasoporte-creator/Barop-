@@ -1,4 +1,4 @@
-const { runVercelHandler } = require('../lib/vercel-adapter');
+const { runCloudflareHandler } = require('../lib/cloudflare-adapter');
 
 const handlers = {
   'chapters': require('../lib/handlers/chapters').handler,
@@ -33,5 +33,5 @@ module.exports = async (req, res) => {
     return;
   }
 
-  await runVercelHandler(handler, req, res);
+  await runCloudflareHandler(handler, req, res);
 };
