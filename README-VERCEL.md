@@ -33,10 +33,11 @@ Ve a tu proyecto en Vercel > Settings > Environment Variables y agrega:
 
 ```
 DATABASE_URL=postgresql://usuario:password@host:5432/database
-MY_AWS_REGION=us-east-2
-MY_AWS_ACCESS_KEY_ID=tu_access_key_id
-MY_AWS_SECRET_ACCESS_KEY=tu_secret_access_key
-MY_AWS_S3_BUCKET_NAME=libros-de-glam-2025
+AWS_REGION=us-east-2
+AWS_ACCESS_KEY_ID=tu_access_key_id
+AWS_SECRET_ACCESS_KEY=tu_secret_access_key
+AWS_S3_BUCKET=mi-bucket
+# Compatibles también: MY_AWS_REGION, MY_AWS_ACCESS_KEY_ID, MY_AWS_SECRET_ACCESS_KEY, MY_AWS_S3_BUCKET_NAME
 NODE_ENV=production
 ```
 

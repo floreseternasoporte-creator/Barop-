@@ -25,6 +25,19 @@ const handlers = {
 module.exports = async (req, res) => {
   const rawPath = req.query.path || req.query.fn || [];
   const route = Array.isArray(rawPath) ? rawPath[0] : rawPath;
+
+  if (route === 'health') {
+    res.status(200).json({
+      ok: true,
+      runtime: 'vercel-node',
+      awsRegionConfigured: Boolean(process.env.AWS_REGION || process.env.MY_AWS_REGION || process.env.ZENVIO_AWS_REGION),
+      awsBucketConfigured: Boolean(process.env.AWS_S3_BUCKET || process.env.MY_AWS_S3_BUCKET_NAME || process.env.ZENVIO_AWS_S3_BUCKET),
+      awsKeyConfigured: Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.MY_AWS_ACCESS_KEY_ID || process.env.ZENVIO_AWS_ACCESS_KEY),
+      awsSecretConfigured: Boolean(process.env.AWS_SECRET_ACCESS_KEY || process.env.MY_AWS_SECRET_ACCESS_KEY || process.env.ZENVIO_AWS_SECRET_KEY)
+    });
+    return;
+  }
+
   const handler = handlers[route];
 
   if (!handler) {
