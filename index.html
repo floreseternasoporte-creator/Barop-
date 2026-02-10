@@ -12892,8 +12892,10 @@ async function likeNote(noteId) {
     mainApp.classList.remove('hidden');
   }
   function performRealTimeSearch() {
-    const query = document.getElementById('search-input').value.trim().toLowerCase();
-    const category = document.getElementById('category-filter').value;
+    const searchInputEl = document.getElementById('search-input');
+    const categoryFilterEl = document.getElementById('category-filter');
+    const query = (searchInputEl?.value || '').trim().toLowerCase();
+    const category = categoryFilterEl?.value || '';
     const recentRangeMs = 7 * 24 * 60 * 60 * 1000;
     const recentThreshold = Date.now() - recentRangeMs;
 
@@ -12903,7 +12905,9 @@ async function likeNote(noteId) {
         stories.forEach((story) => {
           const storyTimestamp = getStoryTimestamp(story);
           const isRecent = storyTimestamp >= recentThreshold;
-          const matchesQuery = story.title && story.title.toLowerCase().includes(query);
+          const storyTitle = (story.title || '').toLowerCase();
+          const storyAuthor = (story.username || story.authorName || '').toLowerCase();
+          const matchesQuery = !query || storyTitle.includes(query) || storyAuthor.includes(query);
           const matchesCategory = !category
             || (category === 'recent' && isRecent)
             || (category === 'system' && (story.category === 'sistema' || story.category === 'system' || story.type === 'sistema' || story.type === 'system'))
@@ -12919,19 +12923,30 @@ async function likeNote(noteId) {
 
     if (query) {
       fetch('/api/users')
-        .then(response => response.json())
+        .then((response) => {
+          if (!response.ok) throw new Error('No se pudieron cargar autores');
+          return response.json();
+        })
         .then(data => {
           const authors = (data.users || []).filter(user =>
-            user.username && user.username.toLowerCase().includes(query)
+            (user.username && user.username.toLowerCase().includes(query))
+            || (user.email && user.email.toLowerCase().includes(query))
           );
           renderAuthorsList(authors);
+        })
+        .catch((error) => {
+          console.error('Error buscando autores:', error);
+          renderAuthorsList([]);
         });
     } else {
       document.getElementById('search-authors-list').innerHTML = '';
     }
   }
 
-document.getElementById('category-filter').addEventListener('change', performRealTimeSearch);
+  const categoryFilter = document.getElementById('category-filter');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', performRealTimeSearch);
+  }
   async function performSearch(query) {
     await new Promise(resolve => setTimeout(resolve, 3000));
     const stories = await loadStoriesFromAWS();
@@ -12950,7 +12965,14 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function renderBooksCarousel(books) {
     const carousel = document.getElementById('search-books-carousel');
+    if (!carousel) return;
     carousel.innerHTML = '';
+
+    if (!books || books.length === 0) {
+      carousel.innerHTML = '<div class="col-span-3 text-center text-gray-500 py-8">No se encontraron historias</div>';
+      return;
+    }
+
     books.forEach(book => {
       const card = document.createElement('div');
       card.className = 'flex-shrink-0 w-48 cursor-pointer';
@@ -12967,16 +12989,26 @@ document.getElementById('category-filter').addEventListener('change', performRea
 
   function renderAuthorsList(authors) {
     const list = document.getElementById('search-authors-list');
+    if (!list) return;
     list.innerHTML = '';
+
+    if (!authors || authors.length === 0) {
+      list.innerHTML = '<div class="text-center text-gray-500 py-8">No se encontraron autores</div>';
+      return;
+    }
+
     authors.forEach(author => {
       const item = document.createElement('div');
       item.className = 'flex items-center space-x-4 cursor-pointer';
       let verifiedIcon = getVerificationIcon(author.email || "");
+      const authorId = author.userId || author.uid;
       item.innerHTML = `
           <img src="${author.profileImage || 'https://via.placeholder.com/50'}" alt="${author.username}" class="w-12 h-12 rounded-full object-cover">
           <span class="font-semibold">${author.username}${verifiedIcon}</span>
         `;
-      item.addEventListener('click', () => openAuthorProfile(author.uid));
+      item.addEventListener('click', () => {
+        if (authorId) openAuthorProfile(authorId);
+      });
       list.appendChild(item);
     });
   }
