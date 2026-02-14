@@ -2428,13 +2428,32 @@ setInterval(checkScheduledChapters, 60000);
       <p id="user-email-display" class="text-sm text-gray-600 mb-6"></p>
       
       <form id="authForm" class="space-y-4" onsubmit="event.preventDefault(); handleAuthSubmit();">
-        <input
-          id="passwordInput"
-          type="password"
-          placeholder="Contraseña"
-          class="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition"
-          required
-        >
+        <div class="relative">
+          <input
+            id="passwordInput"
+            type="password"
+            placeholder="Contraseña"
+            autocomplete="current-password"
+            class="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition"
+            required
+          >
+          <button
+            type="button"
+            id="togglePasswordVisibility"
+            class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-gray-800 transition"
+            aria-label="Mostrar contraseña"
+            aria-pressed="false"
+            title="Mostrar contraseña"
+          >
+            <svg id="eyeIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.27 2.943 9.542 7-1.273 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            <svg id="eyeIconClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.27-2.943-9.542-7a9.973 9.973 0 012.587-4.362m3.176-2.425A9.958 9.958 0 0112 5c4.478 0 8.27 2.943 9.542 7a9.972 9.972 0 01-4.132 5.411M15 12a3 3 0 00-4.145-2.772M3 3l18 18"/>
+            </svg>
+          </button>
+        </div>
         <button
           id="submitButton"
           type="submit"
@@ -11042,6 +11061,9 @@ async function likeNote(noteId) {
   const authForm = document.getElementById('authForm');
   const emailInput = document.getElementById('emailInput');
   const passwordInput = document.getElementById('passwordInput');
+  const togglePasswordButton = document.getElementById('togglePasswordVisibility');
+  const eyeIconOpen = document.getElementById('eyeIconOpen');
+  const eyeIconClosed = document.getElementById('eyeIconClosed');
   const submitButton = document.getElementById('submitButton');
   const toggleAuth = document.getElementById('toggleAuth');
   const authError = document.getElementById('authErrorEmail');
@@ -11074,6 +11096,35 @@ async function likeNote(noteId) {
 
   function hideLoader() {
     console.log('Loading complete');
+  }
+
+  function resetPasswordVisibility() {
+    if (!passwordInput || !togglePasswordButton || !eyeIconOpen || !eyeIconClosed) return;
+
+    passwordInput.type = 'password';
+    eyeIconOpen.classList.remove('hidden');
+    eyeIconClosed.classList.add('hidden');
+    togglePasswordButton.setAttribute('aria-label', 'Mostrar contraseña');
+    togglePasswordButton.setAttribute('title', 'Mostrar contraseña');
+    togglePasswordButton.setAttribute('aria-pressed', 'false');
+  }
+
+  function togglePasswordVisibility() {
+    const isHidden = passwordInput?.type === 'password';
+    if (!passwordInput || !togglePasswordButton || !eyeIconOpen || !eyeIconClosed) return;
+
+    passwordInput.type = isHidden ? 'text' : 'password';
+    eyeIconOpen.classList.toggle('hidden', isHidden);
+    eyeIconClosed.classList.toggle('hidden', !isHidden);
+
+    const buttonText = isHidden ? 'Ocultar contraseña' : 'Mostrar contraseña';
+    togglePasswordButton.setAttribute('aria-label', buttonText);
+    togglePasswordButton.setAttribute('title', buttonText);
+    togglePasswordButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+  }
+
+  if (togglePasswordButton) {
+    togglePasswordButton.addEventListener('click', togglePasswordVisibility);
   }
   const translations = {
     es: {
@@ -11467,12 +11518,14 @@ async function likeNote(noteId) {
     document.getElementById('user-email-display').textContent = email;
     document.getElementById('email-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
+    resetPasswordVisibility();
   }
   
   function backToEmail() {
     document.getElementById('password-form').classList.add('hidden');
     document.getElementById('email-form').classList.remove('hidden');
     document.getElementById('passwordInput').value = '';
+    resetPasswordVisibility();
   }
   
   function showForgotPassword() {
@@ -11485,6 +11538,7 @@ async function likeNote(noteId) {
   function backToPassword() {
     document.getElementById('forgot-password-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
+    resetPasswordVisibility();
   }
   
   // ==================== SISTEMA DE AUTENTICACIÓN POR TELÉFONO ====================
