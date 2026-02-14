@@ -2433,15 +2433,16 @@ setInterval(checkScheduledChapters, 60000);
             id="passwordInput"
             type="password"
             placeholder="Contraseña"
+            autocomplete="current-password"
             class="w-full p-4 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-gray-900 transition"
             required
           >
           <button
             type="button"
             id="togglePasswordVisibility"
-            onclick="togglePasswordVisibility()"
             class="absolute inset-y-0 right-0 px-4 text-gray-500 hover:text-gray-800 transition"
             aria-label="Mostrar contraseña"
+            aria-pressed="false"
             title="Mostrar contraseña"
           >
             <svg id="eyeIconOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -11097,6 +11098,17 @@ async function likeNote(noteId) {
     console.log('Loading complete');
   }
 
+  function resetPasswordVisibility() {
+    if (!passwordInput || !togglePasswordButton || !eyeIconOpen || !eyeIconClosed) return;
+
+    passwordInput.type = 'password';
+    eyeIconOpen.classList.remove('hidden');
+    eyeIconClosed.classList.add('hidden');
+    togglePasswordButton.setAttribute('aria-label', 'Mostrar contraseña');
+    togglePasswordButton.setAttribute('title', 'Mostrar contraseña');
+    togglePasswordButton.setAttribute('aria-pressed', 'false');
+  }
+
   function togglePasswordVisibility() {
     const isHidden = passwordInput?.type === 'password';
     if (!passwordInput || !togglePasswordButton || !eyeIconOpen || !eyeIconClosed) return;
@@ -11108,6 +11120,11 @@ async function likeNote(noteId) {
     const buttonText = isHidden ? 'Ocultar contraseña' : 'Mostrar contraseña';
     togglePasswordButton.setAttribute('aria-label', buttonText);
     togglePasswordButton.setAttribute('title', buttonText);
+    togglePasswordButton.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+  }
+
+  if (togglePasswordButton) {
+    togglePasswordButton.addEventListener('click', togglePasswordVisibility);
   }
   const translations = {
     es: {
@@ -11501,12 +11518,14 @@ async function likeNote(noteId) {
     document.getElementById('user-email-display').textContent = email;
     document.getElementById('email-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
+    resetPasswordVisibility();
   }
   
   function backToEmail() {
     document.getElementById('password-form').classList.add('hidden');
     document.getElementById('email-form').classList.remove('hidden');
     document.getElementById('passwordInput').value = '';
+    resetPasswordVisibility();
   }
   
   function showForgotPassword() {
@@ -11519,6 +11538,7 @@ async function likeNote(noteId) {
   function backToPassword() {
     document.getElementById('forgot-password-form').classList.add('hidden');
     document.getElementById('password-form').classList.remove('hidden');
+    resetPasswordVisibility();
   }
   
   // ==================== SISTEMA DE AUTENTICACIÓN POR TELÉFONO ====================
