@@ -1,69 +1,45 @@
-# Configuración de Cloudflare Workers
+# Configuración de Vercel Serverless
 
 ## Arquitectura
-- **Firebase**: Solo autenticación (Auth). Realtime usa bridge en AWS vía /api/realtime-db
-- **AWS S3**: TODO (datos + imágenes)
-- **AWS SES**: Emails
-- **Cloudflare Workers**: Serverless
-
-## Estructura en S3
-
-```
-barop-storage/
-├── notes/
-│   └── {userId}/
-│       └── {noteId}.json
-├── likes/
-│   └── {noteId}/
-│       └── {userId}.json
-├── following/
-│   └── {userId}/
-│       └── {targetUserId}.json
-├── notifications/
-│   └── {userId}/
-│       └── {notifId}.json
-└── images/
-    ├── profile/{userId}/
-    ├── stories/{userId}/
-    └── notes/{userId}/
-```
+- **Firebase**: Solo autenticación (Auth).
+- **AWS S3**: Datos + imágenes.
+- **AWS SES**: Emails.
+- **Vercel Functions**: Serverless API.
 
 ## Variables de Entorno
 
-```
+```bash
 AWS_ACCESS_KEY_ID
 AWS_SECRET_ACCESS_KEY
 AWS_REGION
 AWS_S3_BUCKET
 SUPPORT_EMAIL
+GROQ_API_KEY
 ```
 
-## Funciones
+## Endpoints API
 
-- `notes.js` - GET/POST/DELETE notas
-- `community-notes.js` - GET/POST notas de comunidad
-- `likes.js` - POST likes
-- `following.js` - POST follow/unfollow
-- `notifications.js` - GET/POST notificaciones
+- `api/notes.js`
+- `api/community-notes.js`
+- `api/likes.js`
+- `api/following.js`
+- `api/notifications.js`
+- `api/scheduled-chapters.js`
+- `api/user-stats.js`
+- `api/users.js`
+- `api/upload-image.js`
+- `api/send-support-email.js`
+- `api/index.js` (router principal)
 
-- `scheduled-chapters.js` - GET/POST capítulos programados
-- `user-stats.js` - GET estadísticas
-- `users.js` - GET/POST perfiles de usuario
-- `upload-image.js` - POST imágenes
-- `send-support-email.js` - POST emails
-
-## Instalación
+## Desarrollo
 
 ```bash
 npm install
+vercel dev
 ```
 
-## Documentación
+## Estado
 
-- Documentación duplicada del módulo CAPTCHA eliminada para mantener el repositorio limpio.
-
-
-## Estado real de migración
-
-- Ver auditoría técnica en `AUDITORIA_INFRAESTRUCTURA.md` para el detalle de dependencias activas.
-- Estado actual: Firebase solo para auth; datos/tiempo real en AWS mediante APIs Cloudflare.
+- Runtime objetivo: **Vercel**.
+- Persistencia: AWS S3 a través de APIs serverless.
+- Firebase Realtime Database no se usa como datastore principal.
