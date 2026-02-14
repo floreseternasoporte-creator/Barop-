@@ -14,7 +14,7 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pap6t+K2bD6xIxQqkQ3sM8e+RXw7C3DyrgXV++o2aL/88+/9kS/l+SmpD8zZR1oN40Nq3QfT7HigDYfFW1zZAQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" integrity="sha512-pap6t+K2bD6xIxQqkQ3sM8e+RXw7C3DyrgXV++o2aL/88+/9kS/l+SmpD8zZR1oN40Nq3QfT7HigDYfFW1zZAQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- MediaPipe para detección facial real -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
@@ -3790,7 +3790,7 @@ function sendChatMessage() {
 	  const messagesContainer = document.getElementById('chat-messages-container');
 	  
 	  try {
-	    // Usar Groq vía Cloudflare Function (evita exponer la API key en el navegador)
+	    // Usar Groq vía Vercel Function (evita exponer la API key en el navegador)
 	    const response = await fetch('/api/groq-chat', {
 	      method: 'POST',
 	      headers: {

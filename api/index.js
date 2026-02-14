@@ -1,5 +1,5 @@
 const AWS = require('../lib/aws-sdk');
-const { runCloudflareHandler } = require('../lib/cloudflare-adapter');
+const { runVercelHandler } = require('../lib/vercel-adapter');
 
 const handlerModules = {
   'chapters': '../lib/handlers/chapters',
@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
   if (route === 'health') {
     res.status(200).json({
       ok: true,
-      runtime: 'cloudflare-workers',
+      runtime: 'vercel-serverless',
       ...getAwsConfigFlags()
     });
     return;
@@ -133,7 +133,7 @@ module.exports = async (req, res) => {
       return;
     }
 
-    await runCloudflareHandler(handler, req, res);
+    await runVercelHandler(handler, req, res);
   } catch (error) {
     res.status(500).json({
       error: `Failed to load handler "${route}".`,
