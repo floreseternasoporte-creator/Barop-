@@ -158,6 +158,6 @@ exports.handler = async (event) => {
     return response(500, { error: error.message });
   }
 };
-const { runCloudflareHandler } = require('../cloudflare-adapter');
+const { runVercelHandler } = require('../vercel-adapter');
 
-module.exports = async (req, res) => runCloudflareHandler(exports.handler, req, res);
+module.exports = async (req, res) => runVercelHandler(exports.handler, req, res);
